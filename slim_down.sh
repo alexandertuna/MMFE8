@@ -23,5 +23,6 @@ echo rm -f ${topdir}/*/*/*~
 echo rm -f ${topdir}/*/*/*/*~
 echo rm -f ${topdir}/*/*/*/*/*~
 
-echo rm -rf ${topdir}/X-3.srcs/sources_1/ip/*
+# breaks
+# echo rm -rf ${topdir}/X-3.srcs/sources_1/ip/*
 
