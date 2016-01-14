@@ -1723,7 +1723,6 @@ delay_count <= axi_reg_78(15 downto 0);
 
 process (clk_200, send_cktp, delay_count)
 begin  -- process
-  --note: i don't think delay_count works
   --note: also clk_tp_period_cnt def has to be a multiple of 5
   if rising_edge(clk_200) then 
     -- option 1: told to send pulse
@@ -1739,7 +1738,6 @@ begin  -- process
      elsif clk_bc_out = '0' then  --want this to reset every cycle
        rise_counter <= (others => '0');
      end if;
-     --added these lines
      --lets delay_counter increment to right values always so that send_cktp
      --going back to 0 doesn't effect delay
      if clk_tp_cntr = clk_tp_period_cnt then
@@ -1768,9 +1766,6 @@ begin  -- process
             if delay_counter = delay_count then 
               clk_tp_out <= '1';
               clk_tp_cntr <= delay_count + '1';
-              --       delay_counter <= (others => '0');
-              --
-              --
             else
               delay_counter <= delay_counter + '1';
             end if;
@@ -1799,49 +1794,6 @@ begin  -- process
 end process;		
 
 
-   
---process( clk_100, reset, send_cktp)
-----process( clk_100, reset, send_cktp, stop_cktp)
---   begin
---       if rising_edge( clk_100) then
---           if reset='1' then
---               clk_tp_cntr <= clk_tp_period_cnt;
---               clk_tp_out  <= '0';
---               cktp_done <= '0';
---           else
---             if cktp_done = '0' and send_cktp = '1' then
---               if clk_tp_cntr = clk_tp_period_cnt then
---                   clk_tp_cntr <= (others => '0') ;
---                   clk_tp_out <= '1';
---               else
---                   clk_tp_cntr <= clk_tp_cntr + '1';
---                   if clk_tp_cntr = clk_tp_dutycycle_cnt then       
---                       clk_tp_out <='0';
---                   end if;
---               end if ;
---             end if;
---             --start editing here 11-2-2015
---             if send_cktp = '0' and cktp_done = '1' then
---               clk_tp_cntr <= clk_tp_period_cnt;
---               cktp_done <= '0';
---               clk_tp_out <= '0';
---             end if;
---             --end editing
-----             if stop_cktp = '1' then
-----               cktp_done <= '1';
-----             end if;
---             if counter_for_cktp_done = x"0032" then  --Changed from ff (from 255 to 50 pulses)
-----             if counter_for_cktp_done = x"0032" then  --Changed from ff (from 255 to 50 pulses)
-----  this sets the number of cktp sent
-----  if you want send continuously, set cktp_done <= '0' here             
---               cktp_done <= '1';
---             end if;
---           end if ;
---       end if ;
---   end process ;
-
-
-   
 --    process (clk_tp_out, reset, send_cktp)
     process (clk_tp_out, send_cktp)
       begin
@@ -1856,7 +1808,7 @@ end process;
       end process ;              
 
 -- select display choice
-process (clk_400_clean)
+process (clk_400_clean)                 --changed this to 400 b/c CKBC is 40 MHz
           begin
                 if rising_edge( clk_400_clean) then
                 case vmm_2display_i is
