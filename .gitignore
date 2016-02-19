@@ -1,2 +1,9 @@
+dat2root
 *~
 *.pyc
+*.root
+*.dat
+*#
+*.d
+.#*
+*.so

@@ -53,15 +53,13 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 };
 
 #endif
 
-#ifdef MMFE8Base_cxx
-MMFE8Base::MMFE8Base(TTree *tree) : fChain(0) 
+inline MMFE8Base::MMFE8Base(TTree *tree) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -76,19 +74,19 @@ MMFE8Base::MMFE8Base(TTree *tree) : fChain(0)
    Init(tree);
 }
 
-MMFE8Base::~MMFE8Base()
+inline MMFE8Base::~MMFE8Base()
 {
    if (!fChain) return;
    delete fChain->GetCurrentFile();
 }
 
-Int_t MMFE8Base::GetEntry(Long64_t entry)
+inline Int_t MMFE8Base::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
-Long64_t MMFE8Base::LoadTree(Long64_t entry)
+inline Long64_t MMFE8Base::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
    if (!fChain) return -5;
@@ -101,7 +99,7 @@ Long64_t MMFE8Base::LoadTree(Long64_t entry)
    return centry;
 }
 
-void MMFE8Base::Init(TTree *tree)
+inline void MMFE8Base::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -131,7 +129,7 @@ void MMFE8Base::Init(TTree *tree)
    Notify();
 }
 
-Bool_t MMFE8Base::Notify()
+inline Bool_t MMFE8Base::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -142,18 +140,18 @@ Bool_t MMFE8Base::Notify()
    return kTRUE;
 }
 
-void MMFE8Base::Show(Long64_t entry)
+inline void MMFE8Base::Show(Long64_t entry)
 {
 // Print contents of entry.
 // If entry is not specified, print current entry
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t MMFE8Base::Cut(Long64_t entry)
+
+inline Int_t MMFE8Base::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
 // returns  1 if entry is accepted.
 // returns -1 otherwise.
    return 1;
 }
-#endif // #ifdef MMFE8Base_cxx
