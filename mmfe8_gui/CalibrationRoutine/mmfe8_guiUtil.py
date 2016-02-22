@@ -140,8 +140,8 @@ class loop_pair(gobject.GObject):
         self.box_Loop = gtk.EventBox()
         self.box_Fix.add(self.button_Fix)
         self.box_Loop.add(self.button_Loop)
-        self.box_Fix.set_size_request(150,-1)
-        self.box_Loop.set_size_request(150,-1)
+        self.box_Fix.set_size_request(225,-1)
+        self.box_Loop.set_size_request(225,-1)
 
         style_toggle = self.button_Fix.get_style().copy()
         style_button = style_toggle.copy()

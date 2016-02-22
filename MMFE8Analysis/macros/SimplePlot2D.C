@@ -1,16 +1,18 @@
 #include <iostream>
 #include <TCanvas.h>
-#include <TH1D.h>
+#include <TChain.h>
+#include <TH2D.h>
 #include <TStyle.h>
 
 #include "include/MMFE8Base.hh"
 
 using namespace std;
 
-void SimplePlot1D(){
+void SimplePlot2D(){
 
   string filename = "test.root";
-  string varname = "PDO";
+  string varXname = "PDO";
+  string varYname = "VMM #";
   
   
   ///////////////////////////////////////////////////////
@@ -23,15 +25,21 @@ void SimplePlot1D(){
 
   int N = tree->GetEntries();
 
-  TH1D* hist = new TH1D("hist","hist", 100, 0.0, 1000.);
+  TH2D* hist = new TH2D("hist","hist", 1000, 0.0, 1000.,8,0.5,8.5);
 
   for(int i = 0; i < N; i++){
     base->GetEntry(i);
 
-    if(base->CHpulse == 10)
+    if(base->CHpulse != base->CHword)
       continue;
 
-    hist->Fill(base->PDO);
+    if(base->CHpulse != 7)
+      continue;
+
+    if(base->VMM == 2)
+      continue;
+
+    hist->Fill(base->PDO,base->VMM);
   
   }
 
@@ -46,13 +54,14 @@ void SimplePlot1D(){
   can->SetGridy();
   
   can->cd();
-  hist->Draw();
+  hist->Draw("COLZ");
   
-  hist->GetXaxis()->SetTitle(varname.c_str());
+  hist->GetXaxis()->SetTitle(varXname.c_str());
   hist->GetXaxis()->CenterTitle();
-  hist->GetYaxis()->SetTitle("N events");
+  hist->GetYaxis()->SetTitle(varYname.c_str());
+  hist->GetYaxis()->CenterTitle();
   hist->GetYaxis()->SetTitleOffset(1.4);
   hist->GetYaxis()->CenterTitle();
-  hist->GetYaxis()->SetRangeUser(0.,hist->GetMaximum()*1.1) ;
+  //hist->GetYaxis()->SetRangeUser(0.,hist->GetMaximum()*1.1) ;
 			     
 }
