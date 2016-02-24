@@ -7,3 +7,6 @@ dat2root
 *.d
 .#*
 *.so
+*.dSYM
+*_.cxx
+*.o

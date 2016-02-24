@@ -1,5 +1,5 @@
-ROOTCFLAGS    = $(shell $(ROOTSYS)/bin/root-config --cflags)
-ROOTGLIBS     = $(shell $(ROOTSYS)/bin/root-config --glibs)
+ROOTCFLAGS    = $(shell root-config --cflags)
+ROOTGLIBS     = $(shell root-config --glibs)
 
 CXX            = g++
 CXXFLAGS       = -fPIC -Wall -O3 -g
