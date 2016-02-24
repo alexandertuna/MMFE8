@@ -45,7 +45,7 @@ void SimplePlot1D(){
     hists.push_back(new TH1D(name.c_str(), "hist", 1024, -0.5, 1023.5));
   }
 
-  //TH1D* hist = new TH1D("hist","hist", 8, 0.5, 8.5);
+  TH1D* hist = new TH1D("hist","hist", 100, 0.0, 1000.);
 
   for (int i = 0; i < N; i++){
     base->GetEntry(i);
@@ -56,6 +56,8 @@ void SimplePlot1D(){
         hists[j]->Fill(base->PDO);
       }
     }
+
+    hist->Fill(base->PDO);
   }
 
   TCanvas* can = new TCanvas("can","can",600,500);
@@ -69,6 +71,7 @@ void SimplePlot1D(){
   can->SetGridy();
 
   can->cd();
+  
   hists[0]->GetXaxis()->SetTitle(varname.c_str());
   hists[0]->GetXaxis()->CenterTitle();
   hists[0]->GetYaxis()->SetTitle("N events");
@@ -92,5 +95,4 @@ void SimplePlot1D(){
   test->cd();
   can->Write();
   test->Close();
-
 }

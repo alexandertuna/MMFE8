@@ -153,6 +153,7 @@ class MMFE8:
             DC = active
             MSGsend1 = "W 0x44A10148 {0:02x} \0\n".format(DC)
             self.udp.udp_client(MSGsend1,self.UDP_IP,self.UDP_PORT)
+            sleep(1)
                
 
     def read_reg(self,widget):
@@ -306,7 +307,7 @@ class MMFE8:
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4"
+        message = "w 0x44A100F4" 
         message = message + ' 0x{0:X}'.format(tempInt)  
         message = message + '\0' + '\n'
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
@@ -379,7 +380,8 @@ class MMFE8:
             message = "w 0x44A100F4"
             message = message + ' 0x{0:X}'.format(tempInt)  
             message = message + '\0' + '\n'
-            self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+            self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)  
+            sleep(1)
             return
 
     def set_acq_reset_count(self,widget,entry):
@@ -401,6 +403,7 @@ class MMFE8:
             print "Wrote",hex(value),"to counts_to_acq_reset"
             print "counts_to_acq_reset = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
+            sleep(1)
             myData = string.split(data,'\n')
             return
 
@@ -423,6 +426,7 @@ class MMFE8:
             print "Wrote",hex(value),"to counts_to_acq_hold"
             print "counts_to_acq_hold = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
+            sleep(1)
             myData = string.split(data,'\n')
             return
 
@@ -473,10 +477,11 @@ class MMFE8:
         self.control[0] = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
+        message = "w 0x44A100FC"
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print "VMM Global Reset  " + message  
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT) 
+        sleep(1)
         return
    
     def system_init(self, widget):
@@ -497,6 +502,7 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        sleep(1)
         return
 
     def system_load(self, widget):
@@ -517,6 +523,7 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        sleep(1)
         return
 
 
@@ -537,15 +544,17 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt)  
         message = message + '\0' + '\n'
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        sleep(1)
         tempInt = 0
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4"
+        message = "w 0x44A100F4" 
         message = message + ' 0x{0:X}'.format(tempInt)  
         message = message + '\0' + '\n'
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
-        return
+        sleep(1)
+        return  
        
     def set_board_ip(self, widget, textBox):
         active = widget.get_active()
@@ -783,6 +792,26 @@ class MMFE8:
     ######################################################
     #    CR - Calibration Routine Functions
     ######################################################
+
+    def set_outputdat_LoopCR(self,widget,entry):
+        fname = entry.get_text()
+        if len(fname) <= 0:
+            print "No Output .dat File Given"
+            print
+            return None 
+        self.CRLoop_Output_dat = fname
+        print "**CR-Loop** Setting output .dat filename to: %s" % fname
+        print
+
+    def set_outputroot_LoopCR(self,widget,entry):
+        fname = entry.get_text()
+        if len(fname) <= 0:
+            print "No Output .root File Given"
+            print
+            return None 
+        self.CRLoop_Output_root = fname
+        print "**CR-Loop** Setting output .root filename to: %s" % fname
+        print
 
     def set_pulses_LoopCR(self,widget,entry):
         try:
@@ -1029,15 +1058,17 @@ class MMFE8:
     def activate_channel(self, iVMM, ich):
         if iVMM < 1 or iVMM > 8:
             return None
-        if ich < 1 or iVMM > 64:
+        if ich < 1 or ich > 64:
             return None
         self.VMM[iVMM-1].chan_list[ich-1].button_SM.set_active(False)
         self.VMM[iVMM-1].chan_list[ich-1].button_ST.set_active(True)
+        print "**CR-Loop** Activating Channel %d in VMM %d" % (ich,iVMM)
+        print
         
     def deactivate_channel(self, iVMM, ich):
         if iVMM < 1 or iVMM > 8:
             return None
-        if ich < 1 or iVMM > 64:
+        if ich < 1 or ich > 64:
             return None
         self.VMM[iVMM-1].chan_list[ich-1].button_SM.set_active(True)
         self.VMM[iVMM-1].chan_list[ich-1].button_ST.set_active(False)
@@ -1050,6 +1081,10 @@ class MMFE8:
         print "**CR-Loop** >>> RUNNING CALIBRATION ROUTINE <<<"
         print 
         
+        # delete existing .dat file for new writing
+        cmd = "rm -f %s" % self.CRLoop_Output_dat
+        os.system(cmd)
+
         Loop_chan  = self.CRLoop_chan
         Loop_VMM   = self.CRLoop_VMM
         Loop_tpDAC = self.CRLoop_tpDAC
@@ -1109,6 +1144,10 @@ class MMFE8:
                                 # run configure and run DAQ for this configuration
                                 self.run_CRLoop_point()
 
+        # create .root file from .dat file (requires dat2root in path)
+        cmd = "dat2root %s -o %s" % (self.CRLoop_Output_dat,self.CRLoop_Output_root)
+        os.system(cmd) 
+
         print "**CR-Loop** >>> FINISHED CALIBRATION ROUTINE <<<"
         print 
                                 
@@ -1118,11 +1157,13 @@ class MMFE8:
     def init_CRLoop(self):
         print "**CR-Loop** Initializing system for calibration routine..."
 
+        self.readout_runlength[24] = 0
+
         print "**CR-Loop**    ...turning on selected VMM readout"
         # turn off readout for all VMMs 
         for i in range(1,9):
             self.readout_runlength[15+i] = 0
-        # turn on readout for selected VMMs
+        # Turn on readout for selected VMMs
         for i in self.Cur_VMM:
             self.readout_runlength[15+i] = 1
 
@@ -1174,16 +1215,32 @@ class MMFE8:
         # VMM load
         print "**CR-Loop** ...Loading VMMs"
         self.button_SystemLoad.clicked()
-        
-        # Internal trigger
-        print "**CR-Loop** ...Internal Trigger"
-        self.button_internal_trigger.clicked()
+
+        # internal trigger
+        self.readout_runlength[24] = 1
+        tempInt = 0
+        for bit in range(32):
+            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
+        message = "w 0x44A100F4" 
+        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + '\0' + '\n'
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
         sleep(1)
 
         # Start DAQ
-        print "**CR-Loop** ...Start DAQ"
+        print "**CR-Loop** ...Starting data-taking"
         self.start_daq_CRLoop()
              
+        self.readout_runlength[24] = 0
+        tempInt = 0
+        for bit in range(32):
+            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
+        message = "w 0x44A100F4" 
+        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + '\0' + '\n'
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        sleep(1)
+
         print "**CR-Loop** Calibration Point Completed"
         print 
 
@@ -1229,11 +1286,10 @@ class MMFE8:
                 m = m + 24
                 StartMsg = "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[w])
                 self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
-                #if self.myDebug:
-                #    print "Sent Message to " + self.UDP_IP 
-                #    print MSGsend #+ "  {0}".format(m)    
+                sleep(1)                                                                                                                                
         MSGsend = StartMsg + MESSAGE + '\0' + '\n'
         self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
+        sleep(1)
         print "\nWrote to Config Registers\n"
         
         self.load_IDs()
@@ -1253,10 +1309,13 @@ class MMFE8:
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        sleep(1)
+
         print "**CR-Loop** ...Starting DAQ"
         self.daq_readOut_CRLoop()
         print "**CR-Loop** ...DAQ finished"             
         sleep(1)
+
         tempInt = 0
         self.control[2] = 0
         #byteint = 0
@@ -1268,10 +1327,10 @@ class MMFE8:
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        sleep(1)
         
     def daq_readOut_CRLoop(self):
-        WORD = 1
-        while WORD > 1:
+        while True:
             fifoCnt = 0
             r=10
             #while ( ( fifoCnt == 0) and ( self.terminate == 0)):
@@ -1281,19 +1340,21 @@ class MMFE8:
                 r = r -1
                 msgFifoCnt = "r 0x44A10014 1 \0 \n" # read word count of data fifo
                 FifoCntData = self.udp.udp_client(msgFifoCnt,self.UDP_IP,self.UDP_PORT)
+                sleep(1)
                 print FifoCntData
                 FifoCntStr = string.split(FifoCntData,' ') # split the string to a list
                 print FifoCntStr
                 fifoCnt = int(FifoCntStr[2],16) # We now have the number of words in the FIFO
-                sleep(1)
             print "FIFOCNT ", fifoCnt
             if fifoCnt % 2 == 0:
                 fcnt = fifoCnt
             else:
-                print "/nlost one count"
+                print "/n lst one count"
                 fcnt = (fifoCnt - 1)
             cycles = fcnt / 10  # reading 10 32-bit data words
             remainder = fcnt % 10
+            if fcnt <= 0:
+                break
             for i in range(1+cycles)[::-1]:  # reverses the order of the count
                 #if( self.terminate == 1):
                 #    return
@@ -1310,8 +1371,7 @@ class MMFE8:
                     #if( self.terminate == 1):
                     #    return
                     dataList = fifoData.split()
-                    WORD = int(dataList[n],16)
-                    fifo32 = WORD
+                    fifo32 = int(dataList[n],16)
                     if fifo32 > 0:
                         fifo32 = fifo32 >> 2     # get rid of first 2 bits (threshold)
                         
@@ -1324,7 +1384,7 @@ class MMFE8:
                         TDO = fifo32 & 255
                         
                         fifo32 = fifo32 >> 8  # we will later check for vmm number
-                        VMMword = fifo32 &  7 # get vmm number
+                        VMMword = (fifo32 & 7) + 1 # get vmm number
 
                         BCID = 0
                         if (n+1) < 12:
@@ -1481,7 +1541,7 @@ class MMFE8:
         self.combo_DC.append_text("2")
         self.combo_DC.append_text("3")
         self.combo_DC.append_text("4")
-        self.combo_DC.set_active(0)
+        #self.combo_DC.set_active(0)
         self.label_DC = gtk.Label(" st")
         self.box_DC = gtk.HBox()
         self.box_DC.pack_start(self.label_Var_DC, expand=False)
@@ -1503,7 +1563,7 @@ class MMFE8:
         self.counts_to_acq_reset = np.zeros((32), dtype=int)                    #0x44A1010C  #DS411_high                #High
         # set default
         self.entry_acq_reset_count.set_text("50")
-        self.entry_acq_reset_count.activate()
+        # self.entry_acq_reset_count.activate()
 
         self.box_acq_reset_count = gtk.HBox()
         self.box_acq_reset_count.pack_start(self.label_acq_reset_count, expand=False)
@@ -1525,7 +1585,7 @@ class MMFE8:
         self.counts_to_acq_hold = np.zeros((32), dtype=int)                    #0x44A1010C  #DS411_high                #High
         # set default
         self.entry_acq_reset_hold.set_text("40")
-        self.entry_acq_reset_hold.activate()
+        # self.entry_acq_reset_hold.activate()
         
         self.box_acq_reset_hold = gtk.HBox()
         self.box_acq_reset_hold.pack_start(self.label_acq_reset_hold, expand=False)
@@ -1716,6 +1776,7 @@ class MMFE8:
         self.combo_IP.set_active(0)
         self.combo_IP.connect("changed",self.set_board_ip, self.entry_mmfeID)
         self.combo_IP.set_size_request(200,-1)
+        self.combo_IP.set_active(3)
 
         self.combo_display = gtk.combo_box_new_text()
         for i in range(32):
@@ -1849,15 +1910,57 @@ class MMFE8:
         self.box_RunCR.add(self.button_RunCR)
         self.buttons_Loop.pack_start(self.box_RunCR,expand=True)
 
+        # set output .dat filename
+        self.label_outputdat = gtk.Label("outputdat")
+        self.label_outputdat.set_markup('<span color="white"><b>    Output .dat filename     </b></span>')
+        self.label_outputdat.set_justify(gtk.JUSTIFY_LEFT)
+        self.button_outputdat = gtk.Entry()
+        self.button_outputdat.set_width_chars(21)
+        self.button_outputdat.set_text("mmfe8_CalibRoutine.dat")
+        self.button_outputdat.set_editable(True)
+        #self.button_outputdat.connect("focus-out-event", self.set_outputdat_LoopCR)
+        self.button_outputdat.connect("activate", self.set_outputdat_LoopCR, self.button_outputdat)
+        self.button_outputdat.activate()
+        self.box_button_outputdat = gtk.EventBox()
+        self.box_button_outputdat.add(self.button_outputdat)
+        self.box_outputdat = gtk.HBox()
+        self.box_outputdat.pack_start(self.label_outputdat, expand=False)
+        self.box_outputdat.pack_start(self.box_button_outputdat, expand=False)
+        self.label_outputdat.set_style(style_frame)
+        self.box_button_outputdat.set_style(style_frame)
+        self.box_outputdat.set_style(style_frame)
+        self.buttons_Loop.pack_start(self.box_outputdat,expand=True)
+        
+        # set output .root filename
+        self.label_outputroot = gtk.Label("outputroot")
+        self.label_outputroot.set_markup('<span color="white"><b>    Output .root filename   </b></span>')
+        self.label_outputroot.set_justify(gtk.JUSTIFY_LEFT)
+        self.button_outputroot = gtk.Entry()
+        self.button_outputroot.set_width_chars(21)
+        self.button_outputroot.set_text("mmfe8_CalibRoutine.root")
+        self.button_outputroot.set_editable(True)
+        #self.button_outputroot.connect("focus-out-event", self.set_outputroot_LoopCR)
+        self.button_outputroot.connect("activate", self.set_outputroot_LoopCR, self.button_outputroot)
+        self.button_outputroot.activate()
+        self.box_button_outputroot = gtk.EventBox()
+        self.box_button_outputroot.add(self.button_outputroot)
+        self.box_outputroot = gtk.HBox()
+        self.box_outputroot.pack_start(self.label_outputroot, expand=False)
+        self.box_outputroot.pack_start(self.box_button_outputroot, expand=False)
+        self.label_outputroot.set_style(style_frame)
+        self.box_button_outputroot.set_style(style_frame)
+        self.box_outputroot.set_style(style_frame)
+        self.buttons_Loop.pack_start(self.box_outputroot,expand=True)
+
         # set desired number of pulses
         self.label_set_pulses = gtk.Label("Number of Pulses / Point")
-        self.label_set_pulses.set_markup('<span color="white"><b>          Number of Pulses / Point (1-998)     </b></span>')
+        self.label_set_pulses.set_markup('<span color="white"><b>    Number of Pulses / Point (1-998)     </b></span>')
         self.label_set_pulses.set_justify(gtk.JUSTIFY_LEFT)
         self.button_set_pulses = gtk.Entry(max=3)
-        self.button_set_pulses.set_width_chars(3)
+        self.button_set_pulses.set_width_chars(5)
         self.button_set_pulses.set_text("100")
         self.button_set_pulses.set_editable(True)
-        self.button_set_pulses.connect("focus-out-event", self.set_pulses_LoopCR)
+        #self.button_set_pulses.connect("focus-out-event", self.set_pulses_LoopCR)
         self.button_set_pulses.connect("activate", self.set_pulses_LoopCR, self.button_set_pulses)
         self.button_set_pulses.activate()
         self.box_button_set_pulses = gtk.EventBox()
@@ -1955,7 +2058,7 @@ class MMFE8:
         self.button_fix_thDAC = gtk.Entry(max=3)
         self.button_fix_thDAC.set_editable(True)
         self.button_fix_thDAC.set_width_chars(6)
-        self.button_fix_thDAC.set_text("300")
+        self.button_fix_thDAC.set_text("200")
         self.button_fix_thDAC.connect("activate", self.fix_thDAC, self.button_fix_thDAC)
         self.button_fix_thDAC.activate()
         
@@ -1963,7 +2066,7 @@ class MMFE8:
         self.button_loop_thDAC = gtk.Entry()
         self.button_loop_thDAC.set_editable(True)
         self.button_loop_thDAC.set_width_chars(8)
-        self.button_loop_thDAC.set_text("200,300")
+        self.button_loop_thDAC.set_text("100,200")
         self.button_loop_thDAC.connect("activate", self.loop_thDAC, self.button_loop_thDAC)
         
         self.frame_thDAC = loop_pair("Threshold DAC",self.button_fix_thDAC,self.button_loop_thDAC)
@@ -2001,10 +2104,6 @@ class MMFE8:
         self.frame_peakingtime = loop_pair("Peaking Time",self.button_fix_peakingtime,self.button_loop_peakingtime)
         self.buttons_Loop.pack_start(self.frame_peakingtime.frame,expand=True)
         
-        
-        #self.box_Loop_buttons = gtk.EventBox()
-        #self.box_Loop_buttons.add(self.buttons_Loop)
-        #self.frame_Loop.add(self.box_Loop_buttons)
 
         
         
@@ -2162,7 +2261,7 @@ class MMFE8:
         self.notebook.append_page(self.userRegs.userRegs_box, self.tab_label_9)
 
         self.page0_scrolledWindow = gtk.ScrolledWindow()
-        self.page0_scrolledWindow.set_size_request(400,-1)
+        self.page0_scrolledWindow.set_size_request(550,-1)
         self.page0_viewport = gtk.Viewport()
         self.page0_viewport.add(self.box_buttons)
         self.page0_scrolledWindow.add(self.page0_viewport)
