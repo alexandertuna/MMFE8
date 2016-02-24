@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 
 int main () {
@@ -12,7 +13,7 @@ int main () {
 
 void FakeDat(string output){
   int N = 1000;
-  
+
   ofstream ofile;
   ofile.open (output.c_str());
 
