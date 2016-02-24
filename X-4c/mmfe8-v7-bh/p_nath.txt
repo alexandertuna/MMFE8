@@ -1,0 +1,67 @@
+['R', '0x44a10014', '0x1e', '\n']
+sending "k 0x44A10010 10
+"
+to 192.168.0.102, 50001
+waiting for response
+received:
+K 0x44a10010 0xe07037 0xe07037 0xb3d5134b 0xe0703b 0xe0703f 0xe0703f 0x666037 0x666037 0x56803b 0x56803b 
+
+closing socket
+--=====================--
+
+14708791
+0xe07037 0xe07037, addr=14, amp=112, time=56, BCid= 37, VMM= 0
+14708795
+0xe0703b 0xb3d5134b, addr=19, amp=275, time=245, BCid= 45, VMM= 4
+14708799
+0xe0703f 0xe0703f, addr=16, amp=112, time=56, BCid= 42, VMM= 0
+6709303
+0x666037 0x666037, addr=14, amp=608, time=25, BCid= 37, VMM= 0
+5668923
+0x56803b 0x56803b, addr=15, amp=640, time=21, BCid= 45, VMM= 0
+sending "k 0x44A10010 10
+"
+to 192.168.0.102, 50001
+waiting for response
+received:
+K 0x44a10010 0x62703f 0x62703f 0x664d37 0x664d37 0xe2803b 0xe2803b 0x566d3f 0x566d3f 0xb3d544c8 0x6e6037 
+
+closing socket
+--=====================--
+
+6451263
+0x62703f 0x62703f, addr=16, amp=624, time=24, BCid= 42, VMM= 0
+6704439
+0x664d37 0x664d37, addr=14, amp=589, time=25, BCid= 2522, VMM= 0
+14843963
+0xe2803b 0xe2803b, addr=15, amp=640, time=56, BCid= 45, VMM= 0
+5664063
+0x566d3f 0x566d3f, addr=16, amp=621, time=21, BCid= 2517, VMM= 0
+7233591
+0x6e6037 0xb3d544c8, addr=51, amp=324, time=245, BCid= 37, VMM= 4
+sending "k 0x44A10010 10
+"
+to 192.168.0.102, 50001
+waiting for response
+received:
+K 0x44a10010 0xe2803b 0xe2803b 0x72703f 0x72703f 0x666037 0x666037 0xe2803b 0xe2803b 0x6a703f 0x6a703f 
+
+closing socket
+--=====================--
+
+14843963
+0xe2803b 0xe2803b, addr=15, amp=640, time=56, BCid= 45, VMM= 0
+7499839
+0x72703f 0x72703f, addr=16, amp=624, time=28, BCid= 42, VMM= 0
+6709303
+0x666037 0x666037, addr=14, amp=608, time=25, BCid= 37, VMM= 0
+14843963
+0xe2803b 0xe2803b, addr=15, amp=640, time=56, BCid= 45, VMM= 0
+6975551
+0x6a703f 0x6a703f, addr=16, amp=624, time=26, BCid= 42, VMM= 0
+sending "k 0x44A10010 0
+"
+to 192.168.0.102, 50001
+waiting for response
+received:
+!Err
