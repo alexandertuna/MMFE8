@@ -3,7 +3,7 @@
 #    by Charlie Armijo, Ken Johns, Bill Hart, Sarah Jones, James Wymer, Kade Gigliotti
 #    Experimental Elementary Particle Physics Laboratory
 #    Physics Department
-#    University of Arizona    
+#    University of Arizona
 #    armijo at physics.arizona.edu
 #    johns at physics.arizona.edu
 #
@@ -19,10 +19,10 @@ from array import *
 import numpy as np
 #from Numeric import *
 from struct import *
-import gobject 
+import gobject
 from subprocess import call
 from time import sleep
-import sys 
+import sys
 import os
 import string
 import random
@@ -49,7 +49,7 @@ class MMFE8:
     # ipAddr will be obtained from an xml file in the future
     ipAddr = ["127.0.0.1","192.168.0.130","192.168.0.101","192.168.0.102","192.168.0.103","192.168.0.104","192.168.0.105","192.168.0.106",
               "192.168.0.107","192.168.0.108","192.168.0.109","192.168.0.110","192.168.0.111","192.168.0.112","192.168.0.167"]
-    # each is the starting address for the 51 config regs for each vmm 
+    # each is the starting address for the 51 config regs for each vmm
     mmfeID = 0
     vmmBaseConfigAddr = [0x44A10020,0x44A10038,0x44A10050,0x44A10068,
                          0x44A10080,0x44A10098,0x44A100B0,0x44A100C8,0x44A100E0]
@@ -81,9 +81,9 @@ class MMFE8:
         md.destroy()
     """
     def udp_client(self, MESSAGE):
-        
+
         sock = socket.socket(socket.AF_INET, # Internet
-             socket.SOCK_DGRAM) # UDP 
+             socket.SOCK_DGRAM) # UDP
         sock.settimeout(5)
         try:
             #send data
@@ -100,8 +100,8 @@ class MMFE8:
         sock.close()
         return data
         """
-   
-	
+
+
     ######################################################
     #    Configuration Functions
     ######################################################
@@ -119,7 +119,7 @@ class MMFE8:
         reg = self.VMM[current_vmm].get_channel_val()
         reglist = list(self.VMM[current_vmm].reg.flatten())
         globalreglist = list(self.VMM[current_vmm].globalreg.flatten())
-        fullreg = reglist[::-1] + globalreglist[::-1] 
+        fullreg = reglist[::-1] + globalreglist[::-1]
         chars = []
         MESSAGE = ""
         n=0
@@ -133,8 +133,8 @@ class MMFE8:
             dummyReg = bytelist[::-1]
             #string = "A" + str(b)
             for bit in range(32):
-                self.byteint[b] += int(dummyReg[bit])*pow(2, 31-bit)             
-        StartMsg =  "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[0]) #.decode('hex')      
+                self.byteint[b] += int(dummyReg[bit])*pow(2, 31-bit)
+        StartMsg =  "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[0]) #.decode('hex')
         for c in range(0,51):
             string = "A" + str(c+1)
             myVal = int(self.byteint[c])
@@ -147,35 +147,35 @@ class MMFE8:
                 StartMsg = "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[w])
                 self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
                 #if self.myDebug:
-                #    print "Sent Message to " + self.UDP_IP 
-                #    print MSGsend #+ "  {0}".format(m)    
+                #    print "Sent Message to " + self.UDP_IP
+                #    print MSGsend #+ "  {0}".format(m)
         MSGsend = StartMsg + MESSAGE + '\0' + '\n'
         self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
         #if self.myDebug:
-        #    print "Sent Message to " + self.UDP_IP 
+        #    print "Sent Message to " + self.UDP_IP
         #    print MSGsend
-        print "\nWrote to Config Registers\n" 
+        print "\nWrote to Config Registers\n"
         self.load_IDs()
         #sleep(5)
         #self.daq_readOut()
         return
-               
+
 
     def read_reg(self,widget):
         # not currently used -- was intended to read the config stream out
-        return        
-             
+        return
+
     def print_config(self, widget):
         current_vmm = int(self.notebook.get_current_page())
         ##create and print full config list
-        self.VMM[current_vmm].entry_SDP_.grab_focus() # gets data for 
+        self.VMM[current_vmm].entry_SDP_.grab_focus() # gets data for
         self.VMM[current_vmm].entry_SDT.grab_focus()
         self.button_print_config.grab_focus()
         reg = self.VMM[current_vmm].get_channel_val()
         reglist = list(self.VMM[current_vmm].reg.flatten())
         globalreglist = list(self.VMM[current_vmm].globalreg.flatten())
         fullreg = reglist[::-1] + globalreglist[::-1]
-        #self.buf = [] 
+        #self.buf = []
         print "\n\nCONFIG STRING for VMM" + str(current_vmm + 1)
         n=0
         reglist = reglist[::-1]
@@ -191,7 +191,7 @@ class MMFE8:
             byteword = int(byteint)
             self.chnlReg[b] = byteword
             #print hex(self.chnlReg[b])
-            print "0x{0:08x}  reg {1:2d}".format(byteword,n)  
+            print "0x{0:08x}  reg {1:2d}".format(byteword,n)
             #except:  IOError as e:
             #    myMsg = "I/O Error"# Reading Ctrl Reg 3:\n{1}".format(e.errno, e.strerror)
             #    #    self.on_erro(widget, myMsg)
@@ -261,7 +261,7 @@ class MMFE8:
                         BCid2 = binstr.int_to_b(BCIDgray,16)
                         myBCid = binstr.b_gray_to_bin(BCid2)
                         myIntBCid = binstr.b_to_int(myBCid)
-                        fifohigh = fifohigh >> 12  # later we will get the turn number 	 
+                        fifohigh = fifohigh >> 12  # later we will get the turn number
                     #print dataList[n+1] + " "+ dataList[n] + ", addr=" + str(addr) + \
                     #               ", amp="+str(amp) + ", time="+str(timing) + ", BCid= " + str(myIntBCid)
                     print dataList[n] + " "+ dataList[n+1] + ", addr=" + str(addr) + \
@@ -273,10 +273,10 @@ class MMFE8:
                     n=n+2
                 else:
                     print "out of order or no data ="# + str(hex(dataList[n]))
-                    # n= n+1       
+                    # n= n+1
                     n=n+2 # paolo
-					
-					
+
+
     def read_xadc(self, widget):
         msg = "x \0 \n"
         for i in range(100):
@@ -289,12 +289,13 @@ class MMFE8:
                 thing2 = (thing1 * 1.0)/4096.0
                 pd.append(thing2)
                 n = n+1
-            print 'XADC = {0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.4f} {5:.4f} {6:.4f} {7:.4f}'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7]) 
-            s = '{0:.4f}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}\t{6:.4f}\t{7:.4f}\n'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7])
+            print 'XADC = {0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.4f} {5:.4f} {6:.4f} {7:.4f}'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7])
             with open('mmfe8-xadc.dat', 'a') as myfile:
-                myfile.write(s)  
+                for j in range(1,9):
+                    s = "VMM={0:i}, CKTPrunning={1:i}, PDAC={2:i}, XADC={3:.4f}\n".format(j,(if pulses == 999: 1 else: 0), self.VMM[1].pulse_DAC_value, pd[j])
+                    myfile.write(s)
         return
-		
+
     def internal_trigger(self, widget):
         if widget.get_active():
             widget.set_label("ON")
@@ -309,9 +310,9 @@ class MMFE8:
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
     def external_trigger(self, widget):
@@ -328,9 +329,9 @@ class MMFE8:
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
     def leaky_readout(self, widget):
@@ -347,9 +348,9 @@ class MMFE8:
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
 
@@ -360,28 +361,28 @@ class MMFE8:
         except ValueError:
             print "Pulses value must be a decimal number"
             print
-            return None                
+            return None
         if (value < 0) or (999 < value): #0x3E7
             print "SDP value out of range"
-            print "0 <= Pulses <= 999" 
+            print "0 <= Pulses <= 999"
             return None
         else:
-            pulses = value
+            global pulses = value
             ### convert value to list of binary digits ###
             pulses = '{0:010b}'.format(pulses)
             pulses_list = list(pulses)
             pulses_list = map(int, pulses)
             ### add new value to register ###
             for i in range(9,-1,-1):
-                self.readout_runlength[9-i] = pulses_list[i] 
+                self.readout_runlength[9-i] = pulses_list[i]
             tempInt = 0
             for bit in range(32):
                 tempInt += int(self.readout_runlength[bit])*pow(2, bit)
             print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
             message = "w 0x44A100F4"
-            message = message + ' 0x{0:X}'.format(tempInt)  
+            message = message + ' 0x{0:X}'.format(tempInt)
             message = message + '\0' + '\n'
-            self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+            self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
             return
 
     def set_acq_reset_count(self,widget,entry):
@@ -392,14 +393,14 @@ class MMFE8:
         except ValueError:
             print "acq_count value must be a hex number"
             print
-            return None                
+            return None
         if (value < 0) or (0xffffffff < value): #0x3E7
             print "Acq count value out of range"
-            print "0 <= acq_count <= 0xffffffff" 
+            print "0 <= acq_count <= 0xffffffff"
             return None
         else:
             acq_count = value
-            MESSAGE = "W 0x44A10120 " + str(value) + '\0' + '\n'             
+            MESSAGE = "W 0x44A10120 " + str(value) + '\0' + '\n'
             print "Wrote",hex(value),"to counts_to_acq_reset"
             print "counts_to_acq_reset = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
@@ -414,14 +415,14 @@ class MMFE8:
         except ValueError:
             print "acq_hold value must be a hex number"
             print
-            return None                
+            return None
         if (value < 0) or (0xffffffff < value): #0x3E7
             print "Acq hold value out of range"
-            print "0 <= acq_hold <= 0xffffffff" 
+            print "0 <= acq_hold <= 0xffffffff"
             return None
         else:
             acq_count = value
-            MESSAGE = "W 0x44A10124 " + str(value) + '\0' + '\n'             
+            MESSAGE = "W 0x44A10124 " + str(value) + '\0' + '\n'
             print "Wrote",hex(value),"to counts_to_acq_hold"
             print "counts_to_acq_hold = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
@@ -432,62 +433,62 @@ class MMFE8:
     ######################################################
     #    Control Functions
     ######################################################
-			
+
     def start(self, widget):
         tempInt = 0
         self.control[2] = 1
         #byteint = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint) 
+            #byteword = int(byteint)
         message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        self.daq_readOut()                   
+        self.daq_readOut()
         sleep(1)
         tempInt = 0
         self.control[2] = 0
         #byteint = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint) 
+            #byteword = int(byteint)
         message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        #self.daq_readOut()                   
+        #self.daq_readOut()
         return
-		
+
     def reset_global(self, widget):
         tempInt = 0
         self.control[0] = 1
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
+        message = "w 0x44A100FC"
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print "VMM Global Reset  " + message  
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT) 
+        print "VMM Global Reset  " + message
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
         tempInt = 0
         self.control[0] = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
+        message = "w 0x44A100FC"
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print "VMM Global Reset  " + message  
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT) 
+        print "VMM Global Reset  " + message
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
-   
+
     def system_init(self, widget):
         tempInt = 0
         self.control[1] = 1
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
@@ -495,8 +496,8 @@ class MMFE8:
         self.control[1] = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
@@ -506,8 +507,8 @@ class MMFE8:
         self.control[3] = 1
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
@@ -515,8 +516,8 @@ class MMFE8:
         self.control[3] = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
@@ -536,19 +537,19 @@ class MMFE8:
             tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
         print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         tempInt = 0
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
-       
+
     def set_board_ip(self, widget, textBox):
         active = widget.get_active()
         if active < 0:
@@ -569,7 +570,7 @@ class MMFE8:
                 #self.vmm_cfg_sel[28+i] = mmfe_ID_list[i]
                 self.vmm_cfg_sel[11-i] = mmfe_ID_list[i]
             print "MMFE8 ID= " + str(self.mmfeID)
-            
+
     ##==============================================##
 
     def set_display(self, widget): #, textBox
@@ -592,9 +593,9 @@ class MMFE8:
             tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
         print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
     def set_display_no_enet(self, widget): #, textBox
@@ -617,15 +618,15 @@ class MMFE8:
             tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
         #print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        #self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        #self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
-       
+
     ######################################################
     #    vmm Readout select Functions
     ######################################################
-    
+
     def readoutVmm1_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -697,7 +698,7 @@ class MMFE8:
         ### button is not checked ###
             self.readout_runlength[23] = 0
         self.load_IDs()
-		
+
     ######################################################
     #    Reset / config vmm select Functions
     ######################################################
@@ -731,7 +732,7 @@ class MMFE8:
             self.vmm_cfg_sel[2] = 0
         self.load_IDs()
         return
-    
+
     def Vmm4Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -741,7 +742,7 @@ class MMFE8:
             self.vmm_cfg_sel[3] = 0
         self.load_IDs()
         return
-    
+
     def Vmm5Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -751,7 +752,7 @@ class MMFE8:
             self.vmm_cfg_sel[4] = 0
         self.load_IDs()
         return
-    
+
     def Vmm6Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -761,7 +762,7 @@ class MMFE8:
             self.vmm_cfg_sel[5] = 0
         self.load_IDs()
         return
-    
+
     def Vmm7Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -793,7 +794,7 @@ class MMFE8:
 
     def __init__(self):
         print "loading MMFE8 GUI..."
-        print 
+        print
         self.tv = gtk.TextView()
         self.tv.set_editable(False)
         self.tv.set_wrap_mode(gtk.WRAP_WORD)
@@ -826,7 +827,7 @@ class MMFE8:
         # ipAddr will be obtained from an xml file in the future
         self.ipAddr = ["127.0.0.1","192.168.0.130","192.168.0.101","192.168.0.102","192.168.0.103","192.168.0.104","192.168.0.105","192.168.0.106",
               "192.168.0.107","192.168.0.108","192.168.0.109","192.168.0.110","192.168.0.111","192.168.0.112","192.168.0.167"]
-        # each is the starting address for the 51 config regs for each vmm 
+        # each is the starting address for the 51 config regs for each vmm
         self.mmfeID = 0
         self.vmmBaseConfigAddr = [0x44A10020,0x44A10038,0x44A10050,0x44A10068,
                          0x44A10080,0x44A10098,0x44A100B0,0x44A100C8,0x44A100E0]
@@ -843,13 +844,13 @@ class MMFE8:
         self.admux = np.zeros((32), dtype=int)                          #0x44A100F8  #admux                     #write
         self.control = np.zeros((32), dtype=int)                 		#0x44A100FC  #was vmm_global_reset      #reset & vmm_gbl_rst_i & vmm_cfg_en_vec( 7 downto 0)
         #self.system_init = np.zeros((32), dtype=int)                   #0x44A10100  #axi_reg_60( 0)            #original reset
-        #self.userRegs = userRegs()                                     #0x44A10104,08,0C,00,14                 #user_reg_1 #user_reg_2 #user_reg_3 #user_reg_4         
+        #self.userRegs = userRegs()                                     #0x44A10104,08,0C,00,14                 #user_reg_1 #user_reg_2 #user_reg_3 #user_reg_4
         self.userRegs = userRegs()                                      #0x44A10104,08,0C,00,14                 #user_reg_1 #user_reg_2 #user_reg_3 #user_reg_4 #user_reg_5
         self.ds2411_low = np.zeros((32), dtype=int)                     #0x44A10118  #DS411_low                 #Low
         self.ds2411_high = np.zeros((32), dtype=int)                    #0x44A1011C  #DS411_high                #High
         self.counts_to_acq_reset = np.zeros((32), dtype=int)            #0x44A10120  #counts_to_acq_reset       #0 to FFFF_FFFF #0=Not Used
         self.counts_to_acq_hold = np.zeros((32), dtype=int)            #0x44A10120  #counts_to_hold_acq_reset       #0 to FFFF_FFFF #0=Not Used
-        self.terminate = 0                    
+        self.terminate = 0
         self.UDP_PORT = 50001
         self.UDP_IP = ""
         self.chnlReg = np.zeros((51), dtype=int)
@@ -857,9 +858,9 @@ class MMFE8:
         self.byteword = np.zeros((32), dtype=int)
 
         ####################################################
-        ##                    GUI   
-        ##                   GLOBAL  
-        ##                   BUTTONS 
+        ##                    GUI
+        ##                   GLOBAL
+        ##                   BUTTONS
         ####################################################
         #print "loading buttons..."
 
@@ -973,7 +974,7 @@ class MMFE8:
         self.check_button_vmm6_reset.connect("toggled", self.Vmm6Reset_callback)
         self.check_button_vmm7_reset = gtk.CheckButton()
         self.check_button_vmm7_reset.connect("toggled", self.Vmm7Reset_callback)
-        self.check_button_vmm8_reset = gtk.CheckButton()        
+        self.check_button_vmm8_reset = gtk.CheckButton()
         self.check_button_vmm8_reset.connect("toggled", self.Vmm8Reset_callback)
         self.label_vmmReset_1 = gtk.Label("1")
         self.label_vmmReset_2 = gtk.Label("2")
@@ -1004,13 +1005,13 @@ class MMFE8:
 
 
         self.label_But_Space1 = gtk.Label(" ")
-        self.label_But_Space2 = gtk.Label(" ")        
+        self.label_But_Space2 = gtk.Label(" ")
         self.label_But_Space3 = gtk.Label(" ")
         self.label_But_Space4 = gtk.Label(" ")
-        self.label_But_Space5 = gtk.Label(" ") 
+        self.label_But_Space5 = gtk.Label(" ")
         self.label_But_Space8 = gtk.Label(" ")
         self.label_But_Space9 = gtk.Label(" ")
-        self.label_But_Space10 = gtk.Label(" ")      
+        self.label_But_Space10 = gtk.Label(" ")
 
 
         self.label_vmmReadoutMask = gtk.Label("vmm2")
@@ -1032,7 +1033,7 @@ class MMFE8:
         self.check_button_vmm7_readout = gtk.CheckButton()
         self.check_button_vmm7_readout.connect("toggled", self.readoutVmm7_callback)
         self.check_button_vmm8_readout = gtk.CheckButton()
-        self.check_button_vmm8_readout.connect("toggled", self.readoutVmm8_callback)        
+        self.check_button_vmm8_readout.connect("toggled", self.readoutVmm8_callback)
         self.label_vmmReadout_1 = gtk.Label("1")
         self.label_vmmReadout_2 = gtk.Label("2")
         self.label_vmmReadout_3 = gtk.Label("3")
@@ -1064,41 +1065,41 @@ class MMFE8:
 
         self.button_write = gtk.Button("Write to Config Buffer")
         self.button_write.child.set_justify(gtk.JUSTIFY_CENTER)
-        self.button_write.set_size_request(-1,-1)        
+        self.button_write.set_size_request(-1,-1)
         self.button_write.connect("clicked",self.write_vmmConfigRegisters)
-        
+
         self.button_read_reg = gtk.Button("READ Config\nRegisters")
         self.button_read_reg.set_sensitive(False)
         self.button_read_reg.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_read_reg.set_size_request(-1,-1)
         self.button_read_reg.connect("clicked",self.read_reg)
-        
+
         self.label_internal_trigger =  gtk.Label("Internal Trigger:    ")
         self.label_internal_trigger.set_markup('<span color="blue"><b>Internal Trigger:    </b></span>')
         self.button_internal_trigger = gtk.ToggleButton("OFF")
         self.button_internal_trigger.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_internal_trigger.connect("clicked",self.internal_trigger)
         self.button_internal_trigger.set_size_request(-1,-1)
-        
+
         self.label_external_trigger =  gtk.Label("External Trigger:    ")
         self.label_external_trigger.set_markup('<span color="blue"><b>External Trigger:    </b></span>')
         self.button_external_trigger = gtk.ToggleButton("OFF")
         self.button_external_trigger.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_external_trigger.connect("clicked",self.external_trigger)
         self.button_external_trigger.set_size_request(-1,-1)
-        
+
         self.label_leaky_readout =  gtk.Label("Leaky Readout Data:    ")
         self.label_leaky_readout.set_markup('<span color="blue"><b>Leaky Readout:    </b></span>')
         self.button_leaky_readout = gtk.ToggleButton("OFF")
         self.button_leaky_readout.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_leaky_readout.connect("clicked",self.leaky_readout)
         self.button_leaky_readout.set_size_request(-1,-1)
-        
+
         self.button_read_XADC = gtk.Button("Read XADC")
         self.button_read_XADC.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_read_XADC.connect("clicked",self.read_xadc)
         self.button_read_XADC.set_size_request(-1,-1)
-        
+
         self.button_print_config = gtk.Button("Print Config Load")
         self.button_print_config.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_print_config.set_size_request(-1,-1)
@@ -1113,16 +1114,16 @@ class MMFE8:
         self.entry_mmfeID = gtk.Entry(max=3)
         self.entry_mmfeID.set_text(str(self.mmfeID))
         self.entry_mmfeID.set_editable(False)
-        
+
         self.label_IP = gtk.Label("IP ADDRESS")
         self.label_IP.set_markup('<span color="blue"><b>MMFE8\nIP ADDRESS</b></span>')
         self.label_IP.set_justify(gtk.JUSTIFY_CENTER)
         self.combo_IP = gtk.combo_box_new_text()
         for i in range (len(self.ipAddr)):
-            self.combo_IP.append_text(self.ipAddr[i]) 
+            self.combo_IP.append_text(self.ipAddr[i])
 
         self.combo_IP.set_active(0)
-        self.combo_IP.connect("changed",self.set_board_ip, self.entry_mmfeID) 
+        self.combo_IP.connect("changed",self.set_board_ip, self.entry_mmfeID)
 
         self.combo_display = gtk.combo_box_new_text()
         for i in range(32):
@@ -1141,9 +1142,9 @@ class MMFE8:
 
         self.button_setIDs = gtk.Button("Set IDs")
         self.button_setIDs.child.set_justify(gtk.JUSTIFY_CENTER)
-        self.button_setIDs.set_size_request(-1,-1)        
+        self.button_setIDs.set_size_request(-1,-1)
         self.button_setIDs.connect("clicked",self.set_IDs)
-        
+
         self.label_mmfe8_id = gtk.Label("mmfe8")
         self.label_mmfe8_id.set_markup('<span color="blue"><b>mmfe8 ID</b></span>')
         self.label_mmfe8_id.set_justify(gtk.JUSTIFY_CENTER)
@@ -1163,19 +1164,19 @@ class MMFE8:
         #self.box_labelID.pack_start(self.label_vmm2_id,expand=False)
         #self.box_labelID.pack_start(self.qs_table,expand=False)
 
-        self.label_Space22 = gtk.Label("  ") 
+        self.label_Space22 = gtk.Label("  ")
 
         self.box_ResetID = gtk.VBox()
         self.box_ResetID.pack_start(self.label_vmmGlobal_Reset,expand=False)
         self.box_ResetID.pack_start(self.vmmReset_table1,expand=False)
         self.box_ResetID.pack_start(self.button_resetVMM,expand=False)
-        #self.box_ResetID.pack_start(self.label_Space22,expand=False)   
+        #self.box_ResetID.pack_start(self.label_Space22,expand=False)
 
         self.box_ReadoutMask = gtk.VBox()
         self.box_ReadoutMask.pack_start(self.label_vmmReadoutMask,expand=False)
         self.box_ReadoutMask.pack_start(self.vmmReadout_table1,expand=False)
         #self.box_ResetID.pack_start(self.button_resetVMM,expand=False)
-        #self.box_ResetID.pack_start(self.label_Space22,expand=False)   
+        #self.box_ResetID.pack_start(self.label_Space22,expand=False)
 
         self.box_vmmID = gtk.HBox()
         self.box_vmmID.pack_start(self.button_setIDs,expand=False) #
@@ -1199,7 +1200,7 @@ class MMFE8:
 
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         #
-        #                          FRAME 1   
+        #                          FRAME 1
         #
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         #print "loading Frame 1..."
@@ -1226,65 +1227,65 @@ class MMFE8:
         #self.box_buttons.pack_start(self.frame_configID,expand=False)
         self.box_buttons.pack_start(self.frame_ReadoutMask,expand=False)
         self.box_buttons.pack_start(self.box_vmmID,expand=False)
-        
-        self.box_buttons.pack_start(self.label_But_Space8,expand=True)  
+
+        self.box_buttons.pack_start(self.label_But_Space8,expand=True)
         self.box_buttons.pack_start(self.button_print_config,expand=False)
         self.box_buttons.pack_start(self.button_write,expand=False)
 
         self.box_buttons.pack_start(self.label_But_Space3,expand=True)
-        self.box_buttons.pack_start(self.frame_Reset,expand=False)  
+        self.box_buttons.pack_start(self.frame_Reset,expand=False)
         #self.box_buttons.pack_start(self.button_resetVMM,expand=False)
         #self.button_resetVMM.set_sensitive(False)
         self.box_buttons.pack_start(self.button_SystemInit,expand=False)
         self.box_buttons.pack_start(self.button_SystemLoad,expand=False)
-        
+
         self.box_buttons.pack_start(self.label_Space22,expand=True)
         self.box_buttons.pack_start(self.box_internal_trigger,expand=False)
         self.box_buttons.pack_start(self.box_external_trigger,expand=False)
         self.box_buttons.pack_start(self.box_leaky_readout,expand=False)
-        self.box_buttons.pack_start(self.box_pulses,expand=False)        
+        self.box_buttons.pack_start(self.box_pulses,expand=False)
         self.box_buttons.pack_start(self.label_pulses2,expand=False)
-        self.box_buttons.pack_start(self.box_acq_reset_count,expand=False)        
+        self.box_buttons.pack_start(self.box_acq_reset_count,expand=False)
         self.box_buttons.pack_start(self.label_acq_reset_count2,expand=False)
-        self.box_buttons.pack_start(self.box_acq_reset_hold,expand=False)        
+        self.box_buttons.pack_start(self.box_acq_reset_hold,expand=False)
         self.box_buttons.pack_start(self.label_acq_reset_hold2,expand=False)
-              
+
         self.box_buttons.pack_start(self.button_start,expand=False)
         #self.box_buttons.pack_start(self.button_start_no_cktp,expand=False)
         # self.box_buttons.pack_start(self.button_read_reg,expand=False)
-        
+
         self.box_buttons.pack_start(self.label_But_Space4,expand=True)
         # self.box_buttons.pack_start(self.button_read_config_VMM_reg,expand=False)
         self.box_buttons.pack_start(self.button_read_XADC,expand=False)
         self.box_buttons.pack_start(self.label_But_Space5,expand=True)
-        self.box_buttons.pack_start(self.button_exit,expand=False)                       
+        self.box_buttons.pack_start(self.button_exit,expand=False)
         self.box_buttons.pack_start(self.label_But_Space2,expand=True)
         self.box_buttons.pack_start(self.label_But_Space1,expand=True)
 
-        self.page1_box = gtk.HBox(homogeneous=0,spacing=0)      
+        self.page1_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page1_box.pack_start(self.VMM[0].box_all_channels, expand=False)
-        self.page1_box.pack_end(self.VMM[0].box_variables, expand=True)       
+        self.page1_box.pack_end(self.VMM[0].box_variables, expand=True)
         self.page2_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page2_box.pack_start(self.VMM[1].box_all_channels, expand=False)
-        self.page2_box.pack_end(self.VMM[1].box_variables, expand=True)                     
+        self.page2_box.pack_end(self.VMM[1].box_variables, expand=True)
         self.page3_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page3_box.pack_start(self.VMM[2].box_all_channels, expand=False)
-        self.page3_box.pack_end(self.VMM[2].box_variables, expand=True)  
+        self.page3_box.pack_end(self.VMM[2].box_variables, expand=True)
         self.page4_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page4_box.pack_start(self.VMM[3].box_all_channels, expand=False)
-        self.page4_box.pack_end(self.VMM[3].box_variables, expand=True)  
+        self.page4_box.pack_end(self.VMM[3].box_variables, expand=True)
         self.page5_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page5_box.pack_start(self.VMM[4].box_all_channels, expand=False)
-        self.page5_box.pack_end(self.VMM[4].box_variables, expand=True)   
+        self.page5_box.pack_end(self.VMM[4].box_variables, expand=True)
         self.page6_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page6_box.pack_start(self.VMM[5].box_all_channels, expand=False)
-        self.page6_box.pack_end(self.VMM[5].box_variables, expand=True)  
+        self.page6_box.pack_end(self.VMM[5].box_variables, expand=True)
         self.page7_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page7_box.pack_start(self.VMM[6].box_all_channels, expand=False)
-        self.page7_box.pack_end(self.VMM[6].box_variables, expand=True)  
+        self.page7_box.pack_end(self.VMM[6].box_variables, expand=True)
         self.page8_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page8_box.pack_start(self.VMM[7].box_all_channels, expand=False)
-        self.page8_box.pack_end(self.VMM[7].box_variables, expand=True)  
+        self.page8_box.pack_end(self.VMM[7].box_variables, expand=True)
         #self.page9_box = gtk.HBox(homogeneous=0,spacing=0)
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1303,7 +1304,7 @@ class MMFE8:
         self.page2_viewport = gtk.Viewport()
         self.page2_viewport.add(self.page2_box)
         self.page2_scrolledWindow.add(self.page2_viewport)
-        
+
         self.page3_scrolledWindow = gtk.ScrolledWindow()
         self.page3_viewport = gtk.Viewport()
         self.page3_viewport.add(self.page3_box)
@@ -1328,7 +1329,7 @@ class MMFE8:
         self.page8_viewport = gtk.Viewport()
         self.page8_viewport.add(self.page8_box)
         self.page8_scrolledWindow.add(self.page8_viewport)
-        
+
         self.notebook.append_page(self.page1_scrolledWindow, self.tab_label_1)
         self.notebook.append_page(self.page2_scrolledWindow, self.tab_label_2)
         self.notebook.append_page(self.page3_scrolledWindow, self.tab_label_3)
@@ -1343,7 +1344,7 @@ class MMFE8:
         self.box_GUI = gtk.HBox(homogeneous=0,spacing=0)
         #self.box_GUI.pack_start(self.myBigButtonsBox, expand=False)
         self.box_GUI.pack_start(self.box_buttons, expand=False)
-        self.box_GUI.pack_end(self.notebook, expand=True)               
+        self.box_GUI.pack_end(self.notebook, expand=True)
         #self.window.add(self.box_buttons)
         self.window.add(self.box_GUI)
         self.window.show_all()
@@ -1366,4 +1367,3 @@ class MMFE8:
 if __name__ == "__main__":
     mmfe8 = MMFE8()
     mmfe8.main()
-

@@ -3,7 +3,7 @@
 #    by Charlie Armijo, Ken Johns, Bill Hart, Sarah Jones, James Wymer, Kade Gigliotti
 #    Experimental Elementary Particle Physics Laboratory
 #    Physics Department
-#    University of Arizona    
+#    University of Arizona
 #    armijo at physics.arizona.edu
 #    johns at physics.arizona.edu
 #
@@ -19,10 +19,10 @@ from array import *
 import numpy as np
 #from Numeric import *
 from struct import *
-import gobject 
+import gobject
 from subprocess import call
 from time import sleep
-import sys 
+import sys
 import os
 import string
 import random
@@ -53,8 +53,8 @@ class vmm:
         return self.reg
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    # 
-    #                QUICK SET FUNCTIONS 
+    #
+    #                QUICK SET FUNCTIONS
     #
     #  This is where we use the Quick Set button to set all
     #  or any set of channel bits.
@@ -69,102 +69,102 @@ class vmm:
                 widget.set_label("n")
 
     def quick_set(self, widget):
-        
+
         if self.check_button_SP_qs.get_active():
-            if self.toggle_button_SP.get_active():        
+            if self.toggle_button_SP.get_active():
                 for chan_num in range(64):
                     #if ch_num < 65:
                     self.chan_list[ch_num].button_SP.set_active(True)
-                    self.chan_list[ch_num].button_SP.set_label("p") 
+                    self.chan_list[ch_num].button_SP.set_label("p")
             else:
                 for ch_num in range(64):
                     #if ch_num < 65:
                     self.chan_list[ch_num].button_SP.set_active(False)
-                    self.chan_list[ch_num].button_SP.set_label("n") 
-        
+                    self.chan_list[ch_num].button_SP.set_label("n")
+
         if self.check_button_SC_qs.get_active():
-            if self.check_button_SC.get_active():        
+            if self.check_button_SC.get_active():
                 for ch_num in range(64):
                     #if ch_num < 65:
-                    self.chan_list[ch_num].button_SC.set_active(True) 
+                    self.chan_list[ch_num].button_SC.set_active(True)
             else:
                 for ch_num in range(64):
                     #if ch_num < 65:
                     self.chan_list[ch_num].button_SC.set_active(False)
 
         if self.check_button_SL_qs.get_active():
-            if self.check_button_SL.get_active():        
+            if self.check_button_SL.get_active():
                 for ch_num in range(64):
                     #if ch_num < 65:
-                    self.chan_list[ch_num].button_SL.set_active(True) 
+                    self.chan_list[ch_num].button_SL.set_active(True)
             else:
                 for ch_num in range(64):
                     #if ch_num < 65:
                     self.chan_list[ch_num].button_SL.set_active(False)
 
         if self.check_button_ST_qs.get_active():
-            if self.check_button_ST.get_active():        
+            if self.check_button_ST.get_active():
                 for ch_num in range(64):
                     #if ch_num < 65:
-                    self.chan_list[ch_num].button_ST.set_active(True) 
+                    self.chan_list[ch_num].button_ST.set_active(True)
             else:
                 for ch_num in range(64):
                     #if ch_num < 65:
                     self.chan_list[ch_num].button_ST.set_active(False)
 
         if self.check_button_SM_qs.get_active():
-            if self.check_button_SM.get_active():        
+            if self.check_button_SM.get_active():
                 for ch_num in range(64):
                     #if ch_num < 65:
-                    self.chan_list[ch_num].button_SM.set_active(True) 
+                    self.chan_list[ch_num].button_SM.set_active(True)
             else:
                 for ch_num in range(64):
                     #if ch_num < 65:
                     self.chan_list[ch_num].button_SM.set_active(False)
 
         if self.check_button_SD_qs.get_active():
-            active = self.combo_SD_qs.get_active()        
+            active = self.combo_SD_qs.get_active()
             for ch_num in range(64):
                 #if ch_num < 65:
-                self.chan_list[ch_num].combo_SD.set_active(active) 
+                self.chan_list[ch_num].combo_SD.set_active(active)
 
         if self.check_button_SMX_qs.get_active():
-            if self.check_button_SMX.get_active():        
+            if self.check_button_SMX.get_active():
                 for ch_num in range(64):
                     #if ch_num < 65:
-                    self.chan_list[ch_num].button_SMX.set_active(True) 
+                    self.chan_list[ch_num].button_SMX.set_active(True)
             else:
                 for ch_num in range(64):
                     #if ch_num < 65:
                     self.chan_list[ch_num].button_SMX.set_active(False)
 
         if self.check_button_SZ10b_qs.get_active():
-            active = self.combo_SZ10b_qs.get_active()        
+            active = self.combo_SZ10b_qs.get_active()
             for ch_num in range(64):
                 #if ch_num < 65:
-                self.chan_list[ch_num].combo_SZ10b.set_active(active) 
+                self.chan_list[ch_num].combo_SZ10b.set_active(active)
 
         if self.check_button_SZ8b_qs.get_active():
-            active = self.combo_SZ8b_qs.get_active()        
+            active = self.combo_SZ8b_qs.get_active()
             for ch_num in range(64):
                 #if ch_num < 65:
-                self.chan_list[ch_num].combo_SZ8b.set_active(active) 
+                self.chan_list[ch_num].combo_SZ8b.set_active(active)
 
         if self.check_button_SZ6b_qs.get_active():
-            active = self.combo_SZ6b_qs.get_active()        
+            active = self.combo_SZ6b_qs.get_active()
             for ch_num in range(64):
                 #if ch_num < 65:
-                self.chan_list[ch_num].combo_SZ6b.set_active(active) 
+                self.chan_list[ch_num].combo_SZ6b.set_active(active)
 
 
 
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     #
-    #                GLOBAL FUNCTIONS     
-    # 
+    #                GLOBAL FUNCTIONS
+    #
     #  Here we take the check box and combo box data for
-    #  the GLOBAL CONFIGURATIONS and put them in the correct 
+    #  the GLOBAL CONFIGURATIONS and put them in the correct
     #  positions in a 96-bit array
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -364,7 +364,7 @@ class vmm:
             if SNG > 0:
                 self.globalreg[38] = 0
 
-    ##### timing outputs control ##### 
+    ##### timing outputs control #####
     def glob_STOT_value(self, widget, data=None):
         STOT = self.globalreg[39]
         if widget.get_active():
@@ -425,7 +425,7 @@ class vmm:
         except ValueError:
             print "SDT value must be a decimal number"
             print
-            return None                
+            return None
         if (value < 0) or (1023 < value):
             print "SDT value out of range"
             print
@@ -450,13 +450,14 @@ class vmm:
         except ValueError:
             print "SDP value must be a decimal number"
             print
-            return None                
+            return None
         if (value < 0) or (1023 < value):
             print "SDP value out of range"
             print
             return None
         else:
             SDP = value
+            self.pulse_DAC_value = SDP # Write global variable.
 
             ### convert value to list of binary digits ###
             SDP = '{0:010b}'.format(SDP)
@@ -620,11 +621,11 @@ class vmm:
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     #                                     <<===============
-    #                      VMM __INIT__   <<=============== 
+    #                      VMM __INIT__   <<===============
     #                                     <<===============
     #  Here we build the necessary variables and widgets
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+
 
     def __init__(self):
         #self.vmm_num = vmm_num
@@ -638,7 +639,7 @@ class vmm:
         self.msg = np.zeros((67), dtype=np.uint32)
         self.globalreg = np.zeros((96), dtype=int)
         #self.reg = np.zeros((64, 24), dtype=int)
-        
+
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         #%%%%%%%%%%%%%%%%%%               %%%%%%%%%%%%%%%%%%%%%
         #%%%%%%%%%%%%%%%%%%  VMM WIDGETS  %%%%%%%%%%%%%%%%%%%%%
@@ -647,13 +648,13 @@ class vmm:
 
 
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        #          
-        #                    64 CHANNELS 
+        #
+        #                    64 CHANNELS
         #
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        #                  CHANNEL LABELS 
+        #                  CHANNEL LABELS
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         self.label_Chan_num_a = gtk.Label("    \n   ")
@@ -675,7 +676,7 @@ class vmm:
         self.label_Chan_SZ10b_a.set_markup('<span color="blue"><b>  SZ10b   </b></span>')
         self.label_Chan_SZ8b_a = gtk.Label("SZ8b")
         self.label_Chan_SZ8b_a.set_markup('<span color="blue"><b>  SZ8b    </b></span>')
-        self.label_Chan_SZ6b_a = gtk.Label("SZ6b")        
+        self.label_Chan_SZ6b_a = gtk.Label("SZ6b")
         self.label_Chan_SZ6b_a.set_markup('<span color="blue"><b>  SZ6b    </b></span>')
 
         self.box_chan_labels_a = gtk.HBox()
@@ -710,7 +711,7 @@ class vmm:
         self.label_Chan_SZ10b_b.set_markup('<span color="blue"><b>  SZ10b   </b></span>')
         self.label_Chan_SZ8b_b = gtk.Label("  SZ8b    ")
         self.label_Chan_SZ8b_b.set_markup('<span color="blue"><b>  SZ8b    </b></span>')
-        self.label_Chan_SZ6b_b = gtk.Label("  SZ6b    ")        
+        self.label_Chan_SZ6b_b = gtk.Label("  SZ6b    ")
         self.label_Chan_SZ6b_b.set_markup('<span color="blue"><b>  SZ6b    </b></span>')
 
         self.box_chan_labels_b = gtk.HBox()
@@ -727,14 +728,14 @@ class vmm:
         self.box_chan_labels_b.pack_start(self.label_Chan_SZ6b_b)
 
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        #                     CHANNEL WIDGETS 
+        #                     CHANNEL WIDGETS
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+
         for chan_num in range(64):
             self.chan_list.append(channel(chan_num))
 
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        #                   QUICK SET WIDGETS   
+        #                   QUICK SET WIDGETS
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -860,16 +861,16 @@ class vmm:
         self.box_Global = gtk.HBox()
         self.box_Global.pack_start(self.label_Global, expand=False)
 
-        self.check_button_SPG = gtk.CheckButton() 
+        self.check_button_SPG = gtk.CheckButton()
         self.label_SPG = gtk.Label("Input Charge Polarity")
         self.label_SPG.set_markup('<span color="blue"><b>Input Charge Polarity   </b></span>')
-        self.label_SPGa = gtk.Label(" spg")   
+        self.label_SPGa = gtk.Label(" spg")
         self.check_button_SPG.connect("toggled", self.glob_SPG_callback)
         self.box_SPG = gtk.HBox()
-        self.box_SPG.pack_start(self.label_SPG, expand=False) 
+        self.box_SPG.pack_start(self.label_SPG, expand=False)
         self.box_SPG.pack_start(self.check_button_SPG, expand=False)
         self.box_SPG.pack_start(self.label_SPGa, expand=False)
-            
+
         self.label_SBMX = gtk.Label("Route Analog Monitor to PDO Output")
         self.label_SBMX.set_markup('<span color="blue"><b>Route Analog Monitor to PDO Output   </b></span>')
         self.check_button_SBMX = gtk.CheckButton("")
@@ -907,14 +908,14 @@ class vmm:
         self.box_SBXX.pack_start(self.check_button_SBFT, expand=False)
         self.box_SBXX.pack_start(self.check_button_SBFP, expand=False)
         self.box_SBXX.pack_start(self.check_button_SBFM, expand=False)
-        
-        self.check_button_SLG = gtk.CheckButton() 
+
+        self.check_button_SLG = gtk.CheckButton()
         self.label_SLG = gtk.Label("Leakage Current Disable")
-        self.label_SLG.set_markup('<span color="blue"><b>Leakage Current Disable   </b></span>')   
+        self.label_SLG.set_markup('<span color="blue"><b>Leakage Current Disable   </b></span>')
         self.check_button_SLG.connect("toggled", self.glob_SLG_callback)
         self.label_SLGa = gtk.Label(" slg")
         self.box_SLG = gtk.HBox()
-        self.box_SLG.pack_start(self.label_SLG, expand=False) 
+        self.box_SLG.pack_start(self.label_SLG, expand=False)
         self.box_SLG.pack_start(self.check_button_SLG, expand=False)
         self.box_SLG.pack_start(self.label_SLGa, expand=False)
 
@@ -932,17 +933,17 @@ class vmm:
         self.combo_SM.set_active(8)
         self.label_SCMX = gtk.Label(" scmx")
         self.label_SCMX.set_markup('<span color="blue"><b>SCMX   </b></span>')
-        self.check_button_SCMX = gtk.CheckButton()   
+        self.check_button_SCMX = gtk.CheckButton()
         self.check_button_SCMX.connect("toggled", self.glob_SCMX_callback)
         self.check_button_SCMX.set_active(1)
         self.box_SCMX = gtk.HBox()
         self.box_SCMX.pack_start(self.label_SCMX, expand=False)
         self.box_SCMX.pack_start(self.check_button_SCMX, expand=False)
-        self.box_SCMX.pack_start(self.label_SM, expand=False) 
+        self.box_SCMX.pack_start(self.label_SM, expand=False)
         self.box_SCMX.pack_start(self.combo_SM, expand=False)
 
         self.label_SFA = gtk.Label("ART Enable")
-        self.label_SFA.set_markup('<span color="blue"><b>ART Enable   </b></span>')    
+        self.label_SFA.set_markup('<span color="blue"><b>ART Enable   </b></span>')
         self.check_button_SFA = gtk.CheckButton()
         self.check_button_SFA.connect("toggled",self.glob_SFA_callback)
         self.check_button_SFA.set_active(True)
@@ -951,7 +952,7 @@ class vmm:
         self.label_mode_SFAM.set_markup('<span color="blue"><b>  Mode    </b></span>')
         self.combo_SFAM = gtk.combo_box_new_text()
         self.combo_SFAM.connect("changed",self.glob_SFAM_value)
-        self.combo_SFAM.append_text("timing-at-threshold")      
+        self.combo_SFAM.append_text("timing-at-threshold")
         self.combo_SFAM.append_text("timing-at-peak")
         self.combo_SFAM.set_active(0)
         self.label_SFAM = gtk.Label(" sfam")
@@ -980,13 +981,13 @@ class vmm:
 
         self.check_button_SFM = gtk.CheckButton()
         self.label_SFM = gtk.Label("SFM")
-        self.label_SFM.set_markup('<span color="blue"><b>SFM   </b></span>')   
+        self.label_SFM.set_markup('<span color="blue"><b>SFM   </b></span>')
         self.check_button_SFM.connect("toggled", self.glob_SFM_callback)
         self.check_button_SFM.set_active(1)
         self.label_SFMb = gtk.Label("  Doubles the Leakage Current")
-        self.label_SFMb.set_markup('<span color="blue"><b>  (Doubles the Leakage Current)</b></span>')        
+        self.label_SFMb.set_markup('<span color="blue"><b>  (Doubles the Leakage Current)</b></span>')
         self.box_SFM = gtk.HBox()
-        self.box_SFM.pack_start(self.label_SFM, expand=False) 
+        self.box_SFM.pack_start(self.label_SFM, expand=False)
         self.box_SFM.pack_start(self.check_button_SFM, expand=False)
         self.box_SFM.pack_start(self.label_SFMb, expand=False)
 
@@ -994,7 +995,7 @@ class vmm:
         self.label_Var_SG.set_markup('<span color="blue"><b>Gain   </b></span>')
         self.combo_SG = gtk.combo_box_new_text()
         self.combo_SG.connect("changed",self.glob_SG_value)
-        self.combo_SG.append_text("0.5 (000)")     
+        self.combo_SG.append_text("0.5 (000)")
         self.combo_SG.append_text("1 (001)")
         self.combo_SG.append_text("3 (010)")
         self.combo_SG.append_text("4.5 (011)")
@@ -1009,15 +1010,15 @@ class vmm:
         self.box_SG.pack_start(self.combo_SG, expand=False)
         self.box_SG.pack_start(self.label_SG, expand=False)
 
-        self.check_button_SNG = gtk.CheckButton() 
+        self.check_button_SNG = gtk.CheckButton()
         self.label_SNG = gtk.Label("Neighbor Triggering")
-        self.label_SNG.set_markup('<span color="blue"><b>Neighbor Triggering   </b></span>')    
+        self.label_SNG.set_markup('<span color="blue"><b>Neighbor Triggering   </b></span>')
         self.check_button_SNG.connect("toggled",self.glob_SNG_callback)
         self.label_SNGa = gtk.Label(" sng")
         self.box_SNG = gtk.HBox()
-        self.box_SNG.pack_start(self.label_SNG, expand=False) 
+        self.box_SNG.pack_start(self.label_SNG, expand=False)
         self.box_SNG.pack_start(self.check_button_SNG,expand=False)
-        self.box_SNG.pack_start(self.label_SNGa, expand=False) 
+        self.box_SNG.pack_start(self.label_SNGa, expand=False)
 
         self.label_STTT = gtk.Label("Timing Outputs")
         self.label_STTT.set_markup('<span color="blue"><b>Timing Outputs </b></span>')
@@ -1027,44 +1028,44 @@ class vmm:
         self.label_mode_STOT = gtk.Label("  Mode    ")
         self.label_mode_STOT.set_markup('<span color="blue"><b>  Mode  </b></span>')
         self.combo_STOT = gtk.combo_box_new_text()
-        self.combo_STOT.connect("changed",self.glob_STOT_value)      
+        self.combo_STOT.connect("changed",self.glob_STOT_value)
         self.combo_STOT.append_text("threshold-to-peak")
         self.combo_STOT.append_text("time-over-threshold")
-        self.combo_STOT.set_active(0)        
+        self.combo_STOT.set_active(0)
         self.label_STOT = gtk.Label(" stot")
         self.box_STXX = gtk.HBox()
-        self.box_STXX.pack_start(self.label_STTT, expand=False)                
+        self.box_STXX.pack_start(self.label_STTT, expand=False)
         self.box_STXX.pack_start(self.check_button_STTT, expand=False)
         self.box_STXX.pack_start(self.label_STTTa, expand=False)
         self.box_STXX.pack_start(self.label_mode_STOT, expand=False)
         self.box_STXX.pack_start(self.combo_STOT, expand=False)
         self.box_STXX.pack_start(self.label_STOT, expand=False)
 
-        self.label_SSH = gtk.Label("Sub-Hysteresis\nDiscrimination")    
+        self.label_SSH = gtk.Label("Sub-Hysteresis\nDiscrimination")
         self.label_SSH.set_markup('<span color="blue"><b>Sub-Hysteresis   \nDiscrimination</b></span>')
         self.check_button_SSH = gtk.CheckButton()
         self.check_button_SSH.connect("toggled", self.glob_SSH_callback)
         self.label_SSHa = gtk.Label(" ssh")
         self.box_SSH = gtk.HBox()
-        self.box_SSH.pack_start(self.label_SSH, expand=False)        
+        self.box_SSH.pack_start(self.label_SSH, expand=False)
         self.box_SSH.pack_start(self.check_button_SSH, expand=False)
         self.box_SSH.pack_start(self.label_SSHa, expand=False)
 
-        self.label_STPP = gtk.Label("Timing Outputs Control 2")    
+        self.label_STPP = gtk.Label("Timing Outputs Control 2")
         self.label_STPP.set_markup('<span color="blue"><b>Timing Outputs Control 2   </b></span>')
         self.check_button_STPP = gtk.CheckButton()
         self.check_button_STPP.connect("toggled", self.glob_STPP_callback)
         self.label_STPPa = gtk.Label(" stpp")
         self.box_STPP = gtk.HBox()
-        self.box_STPP.pack_start(self.label_STPP, expand=False)        
+        self.box_STPP.pack_start(self.label_STPP, expand=False)
         self.box_STPP.pack_start(self.check_button_STPP, expand=False)
         self.box_STPP.pack_start(self.label_STPPa, expand=False)
 
         self.label_Var_STC = gtk.Label("TAC Slope")
-        self.label_Var_STC.set_markup('<span color="blue"><b>TAC Slope   </b></span>')              
+        self.label_Var_STC.set_markup('<span color="blue"><b>TAC Slope   </b></span>')
         self.combo_STC = gtk.combo_box_new_text()
         self.combo_STC.connect("changed", self.glob_STC_value)
-        self.combo_STC.append_text("125 ns (00)")        
+        self.combo_STC.append_text("125 ns (00)")
         self.combo_STC.append_text("250 ns (01)")
         self.combo_STC.append_text("500 ns (10)")
         self.combo_STC.append_text("1000 ns (11)")
@@ -1082,7 +1083,7 @@ class vmm:
         self.entry_SDT.connect("focus-out-event", self.glob_SDT_entry)
         self.entry_SDT.connect("activate", self.glob_SDT_entry, self.entry_SDT)
         #self.label_Var_SDTb = gtk.Label("Press Enter to SET")
-        #self.label_Var_SDTb.set_markup('<span color="red"><b>  <u>PRESS &lt;ENTER&gt;</u> to SET</b></span>')        
+        #self.label_Var_SDTb.set_markup('<span color="red"><b>  <u>PRESS &lt;ENTER&gt;</u> to SET</b></span>')
         # self.combo_SDT = gtk.combo_box_new_text()
         # for i in range(1024):
             # self.combo_SDT.append_text(str(i))
@@ -1101,9 +1102,10 @@ class vmm:
         self.entry_SDP_.set_text("300")
         self.entry_SDP_.connect("focus-out-event", self.glob_SDP_entry ) #,self.entry_SDP_
         self.entry_SDP_.connect("activate", self.glob_SDP_entry, self.entry_SDP_)
+        self.pulse_DAC_value = None
 
         #self.label_Var_SDP_b = gtk.Label("Press Enter to SET")
-        #self.label_Var_SDP_b.set_markup('<span color="red"><b>  <u>PRESS &lt;ENTER&gt;</u> to SET</b></span>') 
+        #self.label_Var_SDP_b.set_markup('<span color="red"><b>  <u>PRESS &lt;ENTER&gt;</u> to SET</b></span>')
         self.label_SDP_ = gtk.Label()
         self.box_SDP_ = gtk.HBox()
         self.box_SDP_.pack_start(self.label_Var_SDP_,expand=False)
@@ -1114,12 +1116,12 @@ class vmm:
         self.label_variable1 = gtk.Label("  \n   ")
         self.label_variable2 = gtk.Label("  \n   ")
         self.label_variable3 = gtk.Label("  \n   ")
-        self.label_variable4 = gtk.Label("  \n   ") 
+        self.label_variable4 = gtk.Label("  \n   ")
         self.label_variable5 = gtk.Label("   ")
-        self.label_variable6 = gtk.Label("Values for Threshold and Test Pulse :") 
-        self.label_variable6.set_markup('<span color="purple"><b>Values for Threshold and Test Pulse :</b></span>') 
+        self.label_variable6 = gtk.Label("Values for Threshold and Test Pulse :")
+        self.label_variable6.set_markup('<span color="purple"><b>Values for Threshold and Test Pulse :</b></span>')
         self.label_variable7 = gtk.Label("  \n  ")
-        self.label_variable9 = gtk.Label("  \n  ") 
+        self.label_variable9 = gtk.Label("  \n  ")
         self.label_variable10 = gtk.Label("  0 <= x <= 1023")
         self.label_variable11 = gtk.Label(" ")
         self.label_variable12 = gtk.Label("to Set the Values for SDT and SDP_")
@@ -1179,7 +1181,7 @@ class vmm:
 
         self.label_S6b = gtk.Label("6-bit ADC Enable")
         self.label_S6b.set_markup('<span color="blue"><b>6-bit ADC Enable   </b></span>')
-        self.check_button_S6b = gtk.CheckButton()   
+        self.check_button_S6b = gtk.CheckButton()
         self.check_button_S6b.connect("toggled", self.glob_S6b_callback)
         self.check_button_S6b.set_active(False)
         self.label_S6ba = gtk.Label("Disables 8 & 10 bit ADC")
@@ -1213,44 +1215,44 @@ class vmm:
         self.box_SPDC.pack_start(self.button_SPDC, expand=False)
         self.box_SPDC.pack_start(self.label_Var_SPDCa, expand=False)
 
-        self.label_SDCKS = gtk.Label("Dual Clock Edge\nSerialized Data Enable\n")    
+        self.label_SDCKS = gtk.Label("Dual Clock Edge\nSerialized Data Enable\n")
         self.label_SDCKS.set_markup('<span color="blue"><b>Dual Clock Edge\nSerialized Data Enable\n   </b></span>')
         self.check_button_SDCKS = gtk.CheckButton()
         self.check_button_SDCKS.connect("toggled", self.glob_SDCKS_callback)
         self.label_SDCKSa = gtk.Label(" sdcks")
         self.box_SDCKS = gtk.HBox()
-        self.box_SDCKS.pack_start(self.label_SDCKS, expand=False)        
+        self.box_SDCKS.pack_start(self.label_SDCKS, expand=False)
         self.box_SDCKS.pack_start(self.check_button_SDCKS, expand=False)
         self.box_SDCKS.pack_start(self.label_SDCKSa, expand=False)
 
-        self.label_SDCKA = gtk.Label("Dual Clock Edge\nSerialized ART Enable\n")    
+        self.label_SDCKA = gtk.Label("Dual Clock Edge\nSerialized ART Enable\n")
         self.label_SDCKA.set_markup('<span color="blue"><b>Dual Clock Edge\nSerialized ART Enable\n   </b></span>')
         self.check_button_SDCKA = gtk.CheckButton()
         self.check_button_SDCKA.connect("toggled", self.glob_SDCKA_callback)
         self.label_SDCKAa = gtk.Label(" sdcka")
         self.box_SDCKA = gtk.HBox()
-        self.box_SDCKA.pack_start(self.label_SDCKA, expand=False)        
+        self.box_SDCKA.pack_start(self.label_SDCKA, expand=False)
         self.box_SDCKA.pack_start(self.check_button_SDCKA, expand=False)
         self.box_SDCKA.pack_start(self.label_SDCKAa, expand=False)
 
-        self.label_SDCK6b = gtk.Label("Dual Clock Edge\nSerialized 6-bit Enable\n")    
+        self.label_SDCK6b = gtk.Label("Dual Clock Edge\nSerialized 6-bit Enable\n")
         self.label_SDCK6b.set_markup('<span color="blue"><b>Dual Clock Edge\nSerialized 6-bit Enable\n    </b></span>')
         self.check_button_SDCK6b = gtk.CheckButton()
         self.check_button_SDCK6b.connect("toggled", self.glob_SDCK6b_callback)
         self.label_SDCK6ba = gtk.Label(" sdck6b")
         self.box_SDCK6b = gtk.HBox()
-        self.box_SDCK6b.pack_start(self.label_SDCK6b, expand=False)        
+        self.box_SDCK6b.pack_start(self.label_SDCK6b, expand=False)
         self.box_SDCK6b.pack_start(self.check_button_SDCK6b, expand=False)
         self.box_SDCK6b.pack_start(self.label_SDCK6ba, expand=False)
 
-        self.label_SDRV = gtk.Label("Tristates Analog Outputs")    
+        self.label_SDRV = gtk.Label("Tristates Analog Outputs")
         self.label_SDRV.set_markup('<span color="blue"><b>Tristates Analog Outputs   </b></span>')
         self.check_button_SDRV = gtk.CheckButton()
         self.check_button_SDRV.connect("toggled", self.glob_SDRV_callback)
         self.check_button_SDRV.set_active(0)
         self.label_SDRVa = gtk.Label(" sdrv")
         self.box_SDRV = gtk.HBox()
-        self.box_SDRV.pack_start(self.label_SDRV, expand=False)        
+        self.box_SDRV.pack_start(self.label_SDRV, expand=False)
         self.box_SDRV.pack_start(self.check_button_SDRV, expand=False)
         self.box_SDRV.pack_start(self.label_SDRVa, expand=False)
 
@@ -1268,7 +1270,7 @@ class vmm:
         self.qs_label = gtk.Label("QUICK SET")
         self.qs_label.set_markup('<span color="blue"><b>Tristates Analog Outputs   </b></span>')
         self.box_quick_set.pack_start(self.qs_table)
-        #self.box_quick_set.pack_end(self.button_quick_set)                
+        #self.box_quick_set.pack_end(self.button_quick_set)
         self.frame_qs.add(self.box_quick_set)
 
         self.label_But_Space6 = gtk.Label(" ")
@@ -1302,7 +1304,7 @@ class vmm:
         self.box_variables.pack_start(self.box_S6b, expand=False)
         self.box_variables.pack_start(self.box_SC6b, expand=False)
         self.box_variables.pack_start(self.box_SPDC, expand=False)
-        
+
         self.box_variables.pack_start(self.box_SDCKS, expand=False)
         self.box_variables.pack_start(self.box_SDCKA, expand=False)
         self.box_variables.pack_start(self.box_SDCK6b, expand=False)
@@ -1316,26 +1318,26 @@ class vmm:
         self.box_variables.pack_start(self.box_SDP_SDT,expand=False)
         #self.box_variables.pack_start(self.label_variable12,expand=False)
         self.box_variables.pack_start(self.label_variable9)
-        self.box_variables.pack_end(self.frame_qs,expand=False) 
+        self.box_variables.pack_end(self.frame_qs,expand=False)
 
 
 
-                                
+
         #################################################
         ###################                 #############
-        ################### CHANNELS FRAMES #############   
-        ###################                 #############   
+        ################### CHANNELS FRAMES #############
+        ###################                 #############
         #################################################
-        
+
         self.frame_2_a = gtk.Frame()
         self.frame_2_a.set_border_width(4)
-        self.frame_2_a.set_shadow_type(gtk.SHADOW_IN)   
+        self.frame_2_a.set_shadow_type(gtk.SHADOW_IN)
         self.box_channels_1a = gtk.VBox(homogeneous=False,spacing=0)
         self.box_channels_a = gtk.VBox(homogeneous=True,spacing=0)
         for ch_num in range(32):
             self.box_channels_a.pack_start(self.chan_list[ch_num].channel_box)
 
-        self.box_channels_1a.pack_start(self.box_chan_labels_a,expand=False)        
+        self.box_channels_1a.pack_start(self.box_chan_labels_a,expand=False)
         self.box_channels_1a.pack_start(self.box_channels_a,expand=False)
         self.frame_2_a.add(self.box_channels_1a)
 
@@ -1350,11 +1352,10 @@ class vmm:
         for ch_num in range(32, 64):
             self.box_channels_b.pack_start(self.chan_list[ch_num].channel_box)
 
-        self.box_channels_1b.pack_start(self.box_chan_labels_b,expand=False)        
+        self.box_channels_1b.pack_start(self.box_chan_labels_b,expand=False)
         self.box_channels_1b.pack_start(self.box_channels_b,expand=False)
         self.frame_2_b.add(self.box_channels_1b)
 
         self.box_all_channels = gtk.HBox()
         self.box_all_channels.pack_start(self.frame_2_a)
         self.box_all_channels.pack_start(self.frame_2_b)
-
