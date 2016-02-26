@@ -290,9 +290,13 @@ class MMFE8:
                 pd.append(thing2)
                 n = n+1
             print 'XADC = {0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.4f} {5:.4f} {6:.4f} {7:.4f}'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7])
+            pulses_on = 0
+            pulse_DAC = self.VMM[1].pulse_DAC_value
+            if self.continuous_pulses:
+                pulses_on = 1
             with open('mmfe8-xadc.dat', 'a') as myfile:
                 for j in range(1,9):
-                    s = "VMM={0:i}, CKTPrunning={1:i}, PDAC={2:i}, XADC={3:.4f}\n".format(j,(if pulses == 999: 1 else: 0), self.VMM[1].pulse_DAC_value, pd[j])
+                    s = "VMM={0:i}, CKTPrunning={1:i}, PDAC={2:i}, XADC={3:.4f}\n".format(j,pulses_on, pulse_DAC, pd[j])
                     myfile.write(s)
         return
 
@@ -367,7 +371,8 @@ class MMFE8:
             print "0 <= Pulses <= 999"
             return None
         else:
-            global pulses = value
+            pulses = value
+            self.continuous_pulses = (pulses == 999)
             ### convert value to list of binary digits ###
             pulses = '{0:010b}'.format(pulses)
             pulses_list = list(pulses)
@@ -824,6 +829,7 @@ class MMFE8:
         for i in range(8):
             self.VMM.append(vmm())
         self.udp = udp_stuff()
+        self.continuous_pulses = None
         # ipAddr will be obtained from an xml file in the future
         self.ipAddr = ["127.0.0.1","192.168.0.130","192.168.0.101","192.168.0.102","192.168.0.103","192.168.0.104","192.168.0.105","192.168.0.106",
               "192.168.0.107","192.168.0.108","192.168.0.109","192.168.0.110","192.168.0.111","192.168.0.112","192.168.0.167"]
