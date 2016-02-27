@@ -296,7 +296,8 @@ class MMFE8:
                 pulses_on = 1
             with open('mmfe8-xadc.dat', 'a') as myfile:
                 for j in range(1,9):
-                    s = "VMM={0:i}, CKTPrunning={1:i}, PDAC={2:i}, XADC={3:.4f}\n".format(j,pulses_on, pulse_DAC, pd[j])
+                    # Note: Saves XADC in mV so that it can be an int.
+                    s = "VMM={0:i}, CKTPrunning={1:i}, PDAC={2:i}, XADC={3:i}\n".format(j,pulses_on, pulse_DAC, int(round(1000*pd[j])))
                     myfile.write(s)
         return
 

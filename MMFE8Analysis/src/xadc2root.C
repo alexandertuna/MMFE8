@@ -44,18 +44,12 @@ int main(int argc, char* argv[]) {
   cout << "Input File:  " << inputFileName << endl;
   cout << "Output File: " << outputFileName << endl;
 
+// Names of readout
   vector<string> sVAR;
   sVAR.push_back("VMM");
-  sVAR.push_back("CHword");
-  sVAR.push_back("CHpulse");
-  sVAR.push_back("PDO");
-  sVAR.push_back("TDO");
-  sVAR.push_back("BCID");
-  sVAR.push_back("TPDAC");
-  sVAR.push_back("THDAC");
-  sVAR.push_back("Delay");
-  sVAR.push_back("TACslope");
-  sVAR.push_back("PeakTime");
+  sVAR.push_back("CKTPrunning");
+  sVAR.push_back("PDAC");
+  sVAR.push_back("XADC");
 
   int Nvar = sVAR.size();
   vector<int> vVAR;
