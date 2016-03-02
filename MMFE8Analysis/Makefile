@@ -15,13 +15,16 @@ CC_FILES := $(wildcard src/*.cc)
 HH_FILES := $(wildcard include/*.hh)
 OBJ_FILES := $(addprefix $(OUTOBJ),$(notdir $(CC_FILES:.cc=.o)))
 
-all: dat2root
+all: dat2root xadc2root
 
 dat2root:  $(SRCDIR)dat2root.C $(OBJ_FILES) $(HH_FILES)
 	$(CXX) $(CXXFLAGS) -o dat2root $(GLIBS) $ $<
 	touch dat2root
 	# $(CXX) $(CXXFLAGS) -o dat2root $(OUTOBJ)*.o $(GLIBS) $ $<	
 
+xadc2root:  $(SRCDIR)xadc2root.C $(OBJ_FILES) $(HH_FILES)
+	$(CXX) $(CXXFLAGS) -o dat2root $(GLIBS) $ $<
+	touch dat2root
 
 $(OUTOBJ)%.o: src/%.cc include/%.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
