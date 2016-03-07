@@ -5,7 +5,7 @@
 #include <TStyle.h>
 #include <TLegend.h>
 
-#include "include/MMFE8Base.hh"
+#include "../include/MMFE8Base.hh"
 
 using namespace std;
 
@@ -71,7 +71,7 @@ void SimplePlot1D(){
   can->SetGridy();
 
   can->cd();
-  
+
   hists[0]->GetXaxis()->SetTitle(varname.c_str());
   hists[0]->GetXaxis()->CenterTitle();
   hists[0]->GetYaxis()->SetTitle("N events");
