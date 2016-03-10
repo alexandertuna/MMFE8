@@ -10,3 +10,5 @@ dat2root
 *.dSYM
 *_.cxx
 *.o
+*.png
+*.pdf
