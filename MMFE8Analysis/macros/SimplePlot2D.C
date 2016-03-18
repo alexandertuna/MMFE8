@@ -13,8 +13,8 @@ using namespace std;
 void SimplePlot2D(){
 
   //string filename = "data/scan_CH1-64_unmasked.root";
-  string filename = "data/scan_CH1-50_masked.root";
-  //string filename = "VMM7_DelayScan.root";
+  //string filename = "data/scan_CH1-50_masked.root";
+  string filename = "test.root";
   string varXname = "VMM #";
   string varYname = "CH #";
   
@@ -61,7 +61,7 @@ void SimplePlot2D(){
       histDelay->Fill(base->CHpulse,base->Delay);
 
     if((base->CHpulse != base->CHword || true) &&
-       base->VMM == 7)
+       base->VMM == 6)
       histchch->Fill(base->CHpulse,base->CHword);
 
     if(base->CHpulse != base->CHword)
