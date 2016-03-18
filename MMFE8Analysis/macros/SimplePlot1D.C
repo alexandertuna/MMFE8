@@ -1,3 +1,4 @@
+#include <string>
 #include <iostream>
 #include <vector>
 #include <TCanvas.h>
@@ -19,7 +20,7 @@ using namespace std;
 
 void SimplePlot1D(){
 
-  string filename = "fakeData.dat.root";
+  string filename = "scan_all.root";
   string varname = "PDO";
 
   int channels[] = {14,15,16,17};
@@ -41,7 +42,7 @@ void SimplePlot1D(){
   TLegend* legend = new TLegend(0.65, 0.8, 0.98, 0.98, varname.c_str());
 
   for (int i = 0; i < num_channels; i++) {
-    string name = "hist chan " + to_string(channels[i]);
+    string name = "hist chan " + string::to_string(channels[i]);
     hists.push_back(new TH1D(name.c_str(), "hist", 1024, -0.5, 1023.5));
   }
 
@@ -51,11 +52,14 @@ void SimplePlot1D(){
     base->GetEntry(i);
     //cout << "VMM # " << base->VMM << endl;
 
-    for (int j = 0; j < num_channels; j++){
-      if (channels[j] == base->CHword) {
-        hists[j]->Fill(base->PDO);
-      }
-    }
+    // for (int j = 0; j < num_channels; j++){
+    //   if (channels[j] == base->CHword) {
+    //     hists[j]->Fill(base->PDO);
+    //   }
+    // }
+
+    if(base->VMM != 2 || base->CHpulse != 1)
+      continue;
 
     hist->Fill(base->PDO);
   }

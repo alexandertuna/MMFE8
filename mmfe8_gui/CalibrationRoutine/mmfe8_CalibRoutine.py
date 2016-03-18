@@ -381,7 +381,6 @@ class MMFE8:
             message = message + ' 0x{0:X}'.format(tempInt)  
             message = message + '\0' + '\n'
             self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)  
-            sleep(1)
             return
 
     def set_acq_reset_count(self,widget,entry):
@@ -403,7 +402,6 @@ class MMFE8:
             print "Wrote",hex(value),"to counts_to_acq_reset"
             print "counts_to_acq_reset = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
-            sleep(1)
             myData = string.split(data,'\n')
             return
 
@@ -426,7 +424,6 @@ class MMFE8:
             print "Wrote",hex(value),"to counts_to_acq_hold"
             print "counts_to_acq_hold = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
-            sleep(1)
             myData = string.split(data,'\n')
             return
 
@@ -481,7 +478,6 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print "VMM Global Reset  " + message  
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT) 
-        sleep(1)
         return
    
     def system_init(self, widget):
@@ -502,7 +498,6 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        sleep(1)
         return
 
     def system_load(self, widget):
@@ -523,7 +518,6 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        sleep(1)
         return
 
 
@@ -553,7 +547,6 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt)  
         message = message + '\0' + '\n'
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
-        sleep(1)
         return  
        
     def set_board_ip(self, widget, textBox):
@@ -1072,6 +1065,14 @@ class MMFE8:
             return None
         self.VMM[iVMM-1].chan_list[ich-1].button_SM.set_active(True)
         self.VMM[iVMM-1].chan_list[ich-1].button_ST.set_active(False)
+
+    def unmask_channel(self, iVMM, ich):
+        if iVMM < 1 or iVMM > 8:
+            return None
+        if ich < 1 or ich > 64:
+            return None
+        self.VMM[iVMM-1].chan_list[ich-1].button_SM.set_active(False)
+        self.VMM[iVMM-1].chan_list[ich-1].button_ST.set_active(False)
         
     def run_CRLoop(self, widget):
         if widget.get_active() is False:
@@ -1094,7 +1095,7 @@ class MMFE8:
         Loop_peakingtime = self.CRLoop_peakingtime
 
         # VMMs to be enabled
-        self.Cur_VMM = Loop_VMM
+        #self.Cur_VMM = Loop_VMM
         
         # initialize system for looping
         self.init_CRLoop()
@@ -1106,43 +1107,60 @@ class MMFE8:
                     for TAC in Loop_TACslope:
                         for peak in Loop_peakingtime:
                             for chan in Loop_chan:
-                                # set current values of parameters
-                                self.Cur_chan = chan
-                                self.Cur_tpDAC = tpDAC
-                                self.Cur_thDAC = thDAC
-                                self.Cur_delay = delay
-                                self.Cur_TACslope = TAC
-                                self.Cur_peaktime = peak
+                                for jvmm in Loop_VMM:
+                                    self.Cur_VMM = [jvmm]
+                                    # set current values of parameters
+                                    self.Cur_chan = chan
+                                    self.Cur_tpDAC = tpDAC
+                                    self.Cur_thDAC = thDAC
+                                    self.Cur_delay = delay
+                                    self.Cur_TACslope = TAC
+                                    self.Cur_peaktime = peak
 
-                                # turn of all channels for all VMMs
-                                for ivmm in range(1,9):
-                                    for ich in range(1,65):
-                                        self.deactivate_channel(ivmm,ich)
+                                    # turn of all channels for all VMMs
+                                    for ivmm in range(1,9):
+                                        for ich in range(1,65):
+                                            self.unmask_channel(ivmm,ich)
                                 
-                                # VMM loop
-                                for ivmm in Loop_VMM:
-                                    # set channel
-                                    self.activate_channel(ivmm,chan)
+                                    # VMM loop
+                                    for ivmm in self.Cur_VMM:
+                                        # set channel
+                                        self.activate_channel(ivmm,chan)
+                                        #self.activate_channel(ivmm,20)
+                                        #self.activate_channel(ivmm,2)
 
-                                    # set TP DAC
-                                    self.VMM[ivmm-1].entry_SDP_.set_text(str(tpDAC))
-                                    self.VMM[ivmm-1].entry_SDP_.activate()
+                                        # set TP DAC
+                                        self.VMM[ivmm-1].entry_SDP_.set_text(str(tpDAC))
+                                        self.VMM[ivmm-1].entry_SDP_.activate()
 
-                                    # set Thresh DAC
-                                    self.VMM[ivmm-1].entry_SDT.set_text(str(thDAC))
-                                    self.VMM[ivmm-1].entry_SDT.activate()
+                                        # set Thresh DAC
+                                        self.VMM[ivmm-1].entry_SDT.set_text(str(thDAC))
+                                        self.VMM[ivmm-1].entry_SDT.activate()
 
-                                    # set TAC slope
-                                    self.VMM[ivmm-1].combo_STC.set_active(TAC)
+                                        # set TAC slope
+                                        self.VMM[ivmm-1].combo_STC.set_active(TAC)
 
-                                    # set peak time
-                                    self.VMM[ivmm-1].combo_ST.set_active(peak)
+                                        # set peak time
+                                        self.VMM[ivmm-1].combo_ST.set_active(peak)
                                     
-                                # set delay counts
-                                self.combo_DC.set_active(delay)
+                                    # masked channels
+                                    for ivmm in self.Cur_VMM:
+                                        if ivmm is 1:
+                                            self.deactivate_channel(ivmm,2)
+                                        if ivmm is 5:
+                                            self.deactivate_channel(ivmm,4)
+                                        if ivmm is 6:
+                                            self.deactivate_channel(ivmm,1)
+                                            self.deactivate_channel(ivmm,2)
+                                            self.deactivate_channel(ivmm,4)
+                                        if ivmm is 8:
+                                            self.deactivate_channel(ivmm,2)
 
-                                # run configure and run DAQ for this configuration
-                                self.run_CRLoop_point()
+                                    # set delay counts
+                                    self.combo_DC.set_active(delay)
+
+                                    # run configure and run DAQ for this configuration
+                                    self.run_CRLoop_point()
 
         # create .root file from .dat file (requires dat2root in path)
         cmd = "dat2root %s -o %s" % (self.CRLoop_Output_dat,self.CRLoop_Output_root)
@@ -1159,6 +1177,52 @@ class MMFE8:
 
         self.readout_runlength[24] = 0
 
+        # print "**CR-Loop**    ...turning on selected VMM readout"
+        # # turn off readout for all VMMs 
+        # for i in range(1,9):
+        #     self.readout_runlength[15+i] = 0
+        # # Turn on readout for selected VMMs
+        # for i in self.Cur_VMM:
+        #     self.readout_runlength[15+i] = 1
+
+        # print "**CR-Loop**    ...turning on selected VMM load"
+        # # turn off load/reset for all VMMs 
+        # for i in range(1,9):
+        #     self.vmm_cfg_sel[i-1] = 0
+        # # turn on load/reset for selected VMMs
+        # for i in self.Cur_VMM:
+        #     self.vmm_cfg_sel[i-1] = 1
+            
+        # self.load_IDs()
+
+        # VMMstr = str(self.Cur_VMM[0])
+        # for x in self.Cur_VMM[1:]:
+        #    VMMstr += ", "+str(x)
+        # print "**CR-Loop** ...Enabled VMMs for readout/reset/load: %s" % VMMstr
+        # print 
+
+        # load number of pulses
+        self.entry_pulses.set_text(str(self.CRLoop_Npulse))
+        self.entry_pulses.activate()
+
+        # load acquisition reset and hold counts
+        self.entry_acq_reset_count.activate()
+        self.entry_acq_reset_hold.activate()
+    
+    def run_CRLoop_point(self):
+        VMMstr = str(self.Cur_VMM[0])
+        for x in self.Cur_VMM[1:]:
+           VMMstr += ", "+str(x)
+        print 
+        print "**CR-Loop** Initializing calibration point:"
+        print "**CR-Loop**    Channel = %d" % self.Cur_chan
+        print "**CR-Loop**    Test Pulse DAC = %d" % self.Cur_tpDAC
+        print "**CR-Loop**    Threshold DAC = %d" % self.Cur_thDAC
+        print "**CR-Loop**    Delay Counts = %d st" % self.Cur_delay
+        print "**CR-Loop**    TAC Slope = %d" % self.Cur_TACslope
+        print "**CR-Loop**    Peak Time = %d" % self.Cur_peaktime
+        print "**CR-Loop**    VMMs = %s" % VMMstr
+        
         print "**CR-Loop**    ...turning on selected VMM readout"
         # turn off readout for all VMMs 
         for i in range(1,9):
@@ -1177,29 +1241,8 @@ class MMFE8:
             
         self.load_IDs()
 
-        # load number of pulses
-        self.entry_pulses.set_text(str(self.CRLoop_Npulse))
-        self.entry_pulses.activate()
+        #self.init_CRLoop()
 
-        # load acquisition reset and hold counts
-        self.entry_acq_reset_count.activate()
-        self.entry_acq_reset_hold.activate()
-        
-        VMMstr = str(self.Cur_VMM[0])
-        for x in self.Cur_VMM[1:]:
-           VMMstr += ", "+str(x)
-        print "**CR-Loop** ...Enabled VMMs for readout/reset/load: %s" % VMMstr
-        print 
-    
-    def run_CRLoop_point(self):
-        print "**CR-Loop** Initializing calibration point:"
-        print "**CR-Loop**    Channel = %d" % self.Cur_chan
-        print "**CR-Loop**    Test Pulse DAC = %d" % self.Cur_tpDAC
-        print "**CR-Loop**    Threshold DAC = %d" % self.Cur_thDAC
-        print "**CR-Loop**    Delay Counts = %d st" % self.Cur_delay
-        print "**CR-Loop**    TAC Slope = %d" % self.Cur_TACslope
-        print "**CR-Loop**    Peak Time = %d" % self.Cur_peaktime
-        
         # write VMM configuration
         print "**CR-Loop** ...Writing VMM config"
         self.write_VMM_CRLoop()
@@ -1216,6 +1259,47 @@ class MMFE8:
         print "**CR-Loop** ...Loading VMMs"
         self.button_SystemLoad.clicked()
 
+        # paolo recipe
+
+        # system reset
+        print "**CR-Loop** ...System Reset"
+        self.button_SystemInit.clicked()
+
+        # VMM load
+        print "**CR-Loop** ...Loading VMMs"
+        self.button_SystemLoad.clicked()
+
+        # load 1 pulse
+        self.entry_pulses.set_text(str(1))
+        self.entry_pulses.activate()
+
+        # do single pulse
+        self.readout_runlength[24] = 1
+        tempInt = 0
+        for bit in range(32):
+            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
+        message = "w 0x44A100F4" 
+        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + '\0' + '\n'
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        sleep(1)
+        self.readout_runlength[24] = 0
+        tempInt = 0
+        for bit in range(32):
+            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
+        message = "w 0x44A100F4" 
+        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + '\0' + '\n'
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+
+        # system reset again
+        print "**CR-Loop** ...System Reset"
+        self.button_SystemInit.clicked()
+
+        # load correct number of pulses
+        self.entry_pulses.set_text(str(self.CRLoop_Npulse))
+        self.entry_pulses.activate()
+        
         # internal trigger
         self.readout_runlength[24] = 1
         tempInt = 0
@@ -1239,7 +1323,6 @@ class MMFE8:
         message = message + ' 0x{0:X}'.format(tempInt)  
         message = message + '\0' + '\n'
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
-        sleep(1)
 
         print "**CR-Loop** Calibration Point Completed"
         print 
@@ -1285,13 +1368,10 @@ class MMFE8:
                 MESSAGE = ""
                 m = m + 24
                 StartMsg = "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[w])
-                self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
-                sleep(1)                                                                                                                                
+                self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)                                                                                                                            
         MSGsend = StartMsg + MESSAGE + '\0' + '\n'
         self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
-        sleep(1)
         print "\nWrote to Config Registers\n"
-        
         self.load_IDs()
         
         return
@@ -1313,8 +1393,7 @@ class MMFE8:
 
         print "**CR-Loop** ...Starting DAQ"
         self.daq_readOut_CRLoop()
-        print "**CR-Loop** ...DAQ finished"             
-        sleep(1)
+        print "**CR-Loop** ...DAQ finished"            
 
         tempInt = 0
         self.control[2] = 0
@@ -1327,9 +1406,14 @@ class MMFE8:
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        sleep(1)
         
     def daq_readOut_CRLoop(self):
+        # data word counting for early termination
+        
+        daq_count = []
+        for ivmm in self.Cur_VMM:
+            daq_count += [0]
+        
         while True:
             fifoCnt = 0
             r=10
@@ -1354,7 +1438,7 @@ class MMFE8:
             cycles = fcnt / 10  # reading 10 32-bit data words
             remainder = fcnt % 10
             if fcnt <= 0:
-                break
+                return
             for i in range(1+cycles)[::-1]:  # reverses the order of the count
                 #if( self.terminate == 1):
                 #    return
@@ -1409,9 +1493,25 @@ class MMFE8:
                         output_string += " PeakTime=%s" % str(self.Cur_peaktime)
                         
                         print dataList[n] + " "+ dataList[n+1] + ", " + output_string
-                    
-                        with open('mmfe8_CalibRoutine.dat', 'a') as myfile:
-                                myfile.write(output_string+'\n')
+                     
+                        with open(self.CRLoop_Output_dat, 'a') as myfile:
+                            myfile.write(output_string+'\n')
+
+                        # data word counting for early termination
+                        if CHword is self.Cur_chan:
+                            done = True
+                            index = 0
+                            for ivmm in self.Cur_VMM:
+                                if VMMword is ivmm:
+                                    daq_count[index] += 1
+                                if ((daq_count[index]) > (self.CRLoop_Npulse*2)):
+                                    done = done and True
+                                else:
+                                    done = False
+                                index += 1
+                            if done is True:
+                                return
+
                         n=n+2
                     else:
                         print "out of order or no data ="# + str(hex(dataList[n]))
@@ -2040,7 +2140,7 @@ class MMFE8:
         self.button_fix_tpDAC = gtk.Entry(max=3)
         self.button_fix_tpDAC.set_editable(True)
         self.button_fix_tpDAC.set_width_chars(6)
-        self.button_fix_tpDAC.set_text("300")
+        self.button_fix_tpDAC.set_text("120")
         self.button_fix_tpDAC.connect("activate", self.fix_tpDAC, self.button_fix_tpDAC)
         self.button_fix_tpDAC.activate()
 
@@ -2048,7 +2148,7 @@ class MMFE8:
         self.button_loop_tpDAC = gtk.Entry()
         self.button_loop_tpDAC.set_editable(True)
         self.button_loop_tpDAC.set_width_chars(8)
-        self.button_loop_tpDAC.set_text("200,300")
+        self.button_loop_tpDAC.set_text("100,150")
         self.button_loop_tpDAC.connect("activate", self.loop_tpDAC, self.button_loop_tpDAC)
         
         self.frame_tpDAC = loop_pair("Test Pulse DAC",self.button_fix_tpDAC,self.button_loop_tpDAC)
@@ -2058,7 +2158,7 @@ class MMFE8:
         self.button_fix_thDAC = gtk.Entry(max=3)
         self.button_fix_thDAC.set_editable(True)
         self.button_fix_thDAC.set_width_chars(6)
-        self.button_fix_thDAC.set_text("200")
+        self.button_fix_thDAC.set_text("220")
         self.button_fix_thDAC.connect("activate", self.fix_thDAC, self.button_fix_thDAC)
         self.button_fix_thDAC.activate()
         
@@ -2066,7 +2166,7 @@ class MMFE8:
         self.button_loop_thDAC = gtk.Entry()
         self.button_loop_thDAC.set_editable(True)
         self.button_loop_thDAC.set_width_chars(8)
-        self.button_loop_thDAC.set_text("100,200")
+        self.button_loop_thDAC.set_text("200,250")
         self.button_loop_thDAC.connect("activate", self.loop_thDAC, self.button_loop_thDAC)
         
         self.frame_thDAC = loop_pair("Threshold DAC",self.button_fix_thDAC,self.button_loop_thDAC)

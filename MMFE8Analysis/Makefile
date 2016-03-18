@@ -23,8 +23,8 @@ dat2root:  $(SRCDIR)dat2root.C $(OBJ_FILES) $(HH_FILES)
 	# $(CXX) $(CXXFLAGS) -o dat2root $(OUTOBJ)*.o $(GLIBS) $ $<	
 
 xadc2root:  $(SRCDIR)xadc2root.C $(OBJ_FILES) $(HH_FILES)
-	$(CXX) $(CXXFLAGS) -o dat2root $(GLIBS) $ $<
-	touch dat2root
+	$(CXX) $(CXXFLAGS) -o xdat2root $(GLIBS) $ $<
+	touch xdat2root
 
 $(OUTOBJ)%.o: src/%.cc include/%.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -33,3 +33,4 @@ clean:
 	rm -f $(OUTOBJ)*.o
 	rm -rf *.dSYM
 	rm -f dat2root
+	rm -f xdat2root
