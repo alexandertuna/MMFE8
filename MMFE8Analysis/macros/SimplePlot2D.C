@@ -19,7 +19,7 @@ void SimplePlot2D(){
   string varYname = "CH #";
   
   // delay count stuff
-  int CH = 22;
+  int CH = 21;
   double delays[5];
   double count_tot[5];
   double count_right[5];
@@ -51,14 +51,18 @@ void SimplePlot2D(){
     base->GetEntry(i);
     
     if(base->CHpulse == CH){
-      count_tot[base->Delay] += 1.;
+      //count_tot[base->Delay] += 1.;
+      count_tot[(base->TPDAC-80)/20] += 1.;
       if(base->CHpulse == base->CHword)
-	count_right[base->Delay] += base->TDO;
+	//count_right[base->Delay] += base->TDO;
+      	count_right[(base->TPDAC-80)/20] += base->PDO;
     }
 
-    histDelayD->Fill(base->CHpulse,base->Delay);
+    //histDelayD->Fill(base->CHpulse,base->Delay);
+    histDelayD->Fill(base->CHpulse,(base->TPDAC-80)/20);
     if(base->CHpulse == base->CHword)
-      histDelay->Fill(base->CHpulse,base->Delay,base->TDO);
+      //histDelay->Fill(base->CHpulse,base->Delay,base->TDO);
+      histDelay->Fill(base->CHpulse,(base->TPDAC-80)/20,base->PDO);
 
     if((base->CHpulse != base->CHword || true) &&
        base->VMM == 6)
