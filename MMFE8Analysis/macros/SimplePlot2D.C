@@ -19,7 +19,7 @@ void SimplePlot2D(){
   string varYname = "CH #";
   
   // delay count stuff
-  int CH = 16;
+  int CH = 22;
   double delays[5];
   double count_tot[5];
   double count_right[5];
@@ -53,12 +53,12 @@ void SimplePlot2D(){
     if(base->CHpulse == CH){
       count_tot[base->Delay] += 1.;
       if(base->CHpulse == base->CHword)
-	count_right[base->Delay] += 1.;
+	count_right[base->Delay] += base->TDO;
     }
 
     histDelayD->Fill(base->CHpulse,base->Delay);
-    if(base->CHpulse != base->CHword)
-      histDelay->Fill(base->CHpulse,base->Delay);
+    if(base->CHpulse == base->CHword)
+      histDelay->Fill(base->CHpulse,base->Delay,base->TDO);
 
     if((base->CHpulse != base->CHword || true) &&
        base->VMM == 6)
@@ -155,7 +155,7 @@ void SimplePlot2D(){
   can_delay->cd();
 
   for(int i = 0; i < 5; i++)
-    count_tot[i] = 1. - count_right[i]/count_tot[i];
+    count_tot[i] = count_right[i]/count_tot[i];
   TGraph* gr = new TGraph(5,delays,count_tot);
   gr->SetMarkerSize(4);
   gr->SetMarkerStyle(5);

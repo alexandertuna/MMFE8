@@ -20,7 +20,7 @@ using namespace std;
 
 void Plot1D(){
 
-  string filename = "scan_CH1-58.root";
+  string filename = "test.root";
   string varname = "PDO";
 
   ///////////////////////////////////////////////////////
@@ -46,13 +46,13 @@ void Plot1D(){
     //   }
     // }
 
-    if(base->VMM != 6|| base->CHpulse != 16)
+    if(base->VMM != 4 || base->CHpulse != 15)
       continue;
 
-    if(base->CHword == base->CHpulse)
+    if(base->CHword != base->CHpulse)
      continue;
 
-    hist->Fill(base->PDO);
+    hist->Fill(base->TDO);
   }
 
   TCanvas* can = new TCanvas("can","can",600,500);
