@@ -855,6 +855,9 @@ class vmm:
         #####################            ###################
         ####################################################
 
+        # Variables to be intentionally externally accessed:
+        self.pulse_DAC_value = 0xDEADBEEF
+
         self.label_Global = gtk.Label("GLOBAL CONFIGURATION")
         self.label_Global.set_markup('<span color="blue" size="18000">      <b><u>GLOBAL CONFIGURATION</u></b></span>')
         self.label_Global.set_justify(gtk.JUSTIFY_CENTER)
@@ -1102,7 +1105,6 @@ class vmm:
         self.entry_SDP_.set_text("300")
         self.entry_SDP_.connect("focus-out-event", self.glob_SDP_entry ) #,self.entry_SDP_
         self.entry_SDP_.connect("activate", self.glob_SDP_entry, self.entry_SDP_)
-        self.pulse_DAC_value = None
 
         #self.label_Var_SDP_b = gtk.Label("Press Enter to SET")
         #self.label_Var_SDP_b.set_markup('<span color="red"><b>  <u>PRESS &lt;ENTER&gt;</u> to SET</b></span>')

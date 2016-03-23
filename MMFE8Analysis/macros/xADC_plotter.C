@@ -1,29 +1,31 @@
-#include <string>
 #include <iostream>
 #include <vector>
 #include <TCanvas.h>
 #include <TH1D.h>
+#include <TF1.h>
 #include <TStyle.h>
 #include <TLegend.h>
 
-#include "../include/MMFE8Base.hh"
+#include "../include/xADCBase.hh"
 
 using namespace std;
 
 /*
  * Spec for Ben's project:
- * Overlay PDO data from channels 14-17 on one histogram, different colors.
+ * Overlay PDO data from vmms 14-17 on one histogram, different colors.
  * Legend should show the different styles and the channel number
  * A text box should give the information not contained in the graph (which VMM)
  * Label axes.
  */
 
-void SimplePlot1D(){
+void xADC_plotter(){
 
-  string filename = "scan_all.root";
-  string varname = "PDO";
+  string filename = "../xADC_testdata.root";
+  string varname = "xADC voltage (V)";
+  string outputfile = "./xADC_test1";
 
-  int channels[] = {14,15,16,17};
+  int vmms[] = {1};
+  int pdac = 40;
   int colors[] = {kViolet+8, kBlue+4, kBlue, kAzure+10, kTeal-5};
 
   ///////////////////////////////////////////////////////
@@ -32,36 +34,29 @@ void SimplePlot1D(){
 
   tree->AddFile(filename.c_str());
 
-  MMFE8Base* base = new MMFE8Base(tree);
+  xADCBase* base = new xADCBase(tree);
 
   int N = tree->GetEntries();
 
-  int num_channels = sizeof(channels) / sizeof(int);
+  int num_vmms = sizeof(vmms) / sizeof(int);
 
   vector<TH1D*> hists;
   TLegend* legend = new TLegend(0.65, 0.8, 0.98, 0.98, varname.c_str());
 
-  for (int i = 0; i < num_channels; i++) {
-    string name = "hist chan " + string::to_string(channels[i]);
-    hists.push_back(new TH1D(name.c_str(), "hist", 1024, -0.5, 1023.5));
+  for (int i = 0; i < num_vmms; i++) {
+    string name = "hist chan " + to_string(vmms[i]);
+    hists.push_back(new TH1D(name.c_str(), "hist", 4096, -0.01, 1.025));
   }
-
-  TH1D* hist = new TH1D("hist","hist", 100, 0.0, 1000.);
 
   for (int i = 0; i < N; i++){
     base->GetEntry(i);
     //cout << "VMM # " << base->VMM << endl;
 
-    // for (int j = 0; j < num_channels; j++){
-    //   if (channels[j] == base->CHword) {
-    //     hists[j]->Fill(base->PDO);
-    //   }
-    // }
-
-    if(base->VMM != 2 || base->CHpulse != 1)
-      continue;
-
-    hist->Fill(base->PDO);
+    for (int j = 0; j < num_vmms; j++){
+      if ((vmms[j] == base->VMM) && (pdac == base->PDAC)) {
+        hists[j]->Fill(float(base->XADC)/(4096.0));
+      }
+    }
   }
 
   TCanvas* can = new TCanvas("can","can",600,500);
@@ -70,11 +65,16 @@ void SimplePlot1D(){
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
 
+  //TF1* function = new TF1("normal", )
+
   can->Draw();
   can->SetGridx();
   can->SetGridy();
 
   can->cd();
+
+  double mean = hists[0]->GetMean();
+  double stdev = hists[0]->GetStdDev();
 
   hists[0]->GetXaxis()->SetTitle(varname.c_str());
   hists[0]->GetXaxis()->CenterTitle();
@@ -82,20 +82,23 @@ void SimplePlot1D(){
   hists[0]->GetYaxis()->SetTitleOffset(1.4);
   hists[0]->GetYaxis()->CenterTitle();
   hists[0]->GetYaxis()->SetRangeUser(0.,hists[0]->GetMaximum()*1.1);
+  hists[0]->GetXaxis()->SetRangeUser(mean-(6*stdev),mean+(6*stdev));
 
-  for (int i = 0; i < num_channels; i++){
+  for (int i = 0; i < num_vmms; i++){
     hists[i]->SetLineColorAlpha(colors[i], 0.8);
     if (i != 0){
+      hists[i]->Fit("gaus");
       hists[i]->Draw("same");
     }
     else {
+      hists[i]->Fit("gaus");
       hists[i]->Draw();
     }
-    legend->AddEntry(hists[i], ("Channel " + to_string(channels[i])).c_str());
+    legend->AddEntry(hists[i], ("Channel " + to_string(vmms[i])).c_str());
   }
   legend->Draw();
 
-  TFile* test = new TFile("test.root","RECREATE");
+  TFile* test = new TFile((outputfile + ".root").c_str(),"RECREATE");
   test->cd();
   can->Write();
   test->Close();

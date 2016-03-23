@@ -282,22 +282,29 @@ class MMFE8:
         for i in range(100):
             myXADC = self.udp.udp_client(msg,self.UDP_IP,self.UDP_PORT)
             pd = []
+            pd_ints = []
             n = 1
             while n<9:
                 xadcList = myXADC.split()
                 thing1 = int(xadcList[n],16)
+                pd_ints.append(thing1)
                 thing2 = (thing1 * 1.0)/4096.0
                 pd.append(thing2)
                 n = n+1
             print 'XADC = {0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.4f} {5:.4f} {6:.4f} {7:.4f}'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7])
+            # Testing:
+            #for j in range(8):
+            #    print "XADC={0:d}\n".format(int(round(1000*pd[j])))
             pulses_on = 0
-            pulse_DAC = self.VMM[1].pulse_DAC_value
             if self.continuous_pulses:
                 pulses_on = 1
+            
+            pulse_DAC_value = self.VMM[int(self.notebook.get_current_page())].pulse_DAC_value
             with open('mmfe8-xadc.dat', 'a') as myfile:
-                for j in range(1,9):
+                for j in range(8):
                     # Note: Saves XADC in mV so that it can be an int.
-                    s = "VMM={0:i}, CKTPrunning={1:i}, PDAC={2:i}, XADC={3:i}\n".format(j,pulses_on, pulse_DAC, int(round(1000*pd[j])))
+                    s = "VMM={0:d}, CKTPrunning={1:d}, PDAC={2:d}, XADC={3:d}\n".format((j+1), 
+                                    pulses_on, pulse_DAC_value, pd_ints[j])
                     myfile.write(s)
         return
 
