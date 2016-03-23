@@ -1,4 +1,5 @@
 dat2root
+*.DS_Store
 *~
 *.pyc
 *#
@@ -7,6 +8,7 @@ dat2root
 *.so
 *.dSYM
 *_.cxx
+*.root
 *.o
 *.png
 *.pdf
