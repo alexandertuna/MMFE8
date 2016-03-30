@@ -3,7 +3,7 @@
 #    by Charlie Armijo, Ken Johns, Bill Hart, Sarah Jones, James Wymer, Kade Gigliotti
 #    Experimental Elementary Particle Physics Laboratory
 #    Physics Department
-#    University of Arizona    
+#    University of Arizona
 #    armijo at physics.arizona.edu
 #    johns at physics.arizona.edu
 #
@@ -11,7 +11,7 @@
 
 #    calibration routine by Christopher Rogan
 #    Physics Department
-#    Harvard University    
+#    Harvard University
 #    crogan at cern.ch
 
 
@@ -24,10 +24,10 @@ from array import *
 import numpy as np
 #from Numeric import *
 from struct import *
-import gobject 
+import gobject
 from subprocess import call
 from time import sleep
-import sys 
+import sys
 import os
 import string
 import random
@@ -55,7 +55,7 @@ class MMFE8:
     # ipAddr will be obtained from an xml file in the future
     ipAddr = ["127.0.0.1","192.168.0.130","192.168.0.101","192.168.0.102","192.168.0.103","192.168.0.104","192.168.0.105","192.168.0.106",
               "192.168.0.107","192.168.0.108","192.168.0.109","192.168.0.110","192.168.0.111","192.168.0.112","192.168.0.167"]
-    # each is the starting address for the 51 config regs for each vmm 
+    # each is the starting address for the 51 config regs for each vmm
     mmfeID = 0
     vmmBaseConfigAddr = [0x44A10020,0x44A10038,0x44A10050,0x44A10068,
                          0x44A10080,0x44A10098,0x44A100B0,0x44A100C8,0x44A100E0]
@@ -77,7 +77,7 @@ class MMFE8:
         sleep(1) # allow the threads to complete
         print "Goodbye from the MMFE8 GUI!"
         gtk.main_quit()
-        
+
     def on_erro(self, widget, msg):
         md = gtk.MessageDialog(None,
              gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR,
@@ -85,8 +85,8 @@ class MMFE8:
         md.set_title("ERROR")
         md.run()
         md.destroy()
-   
-	
+
+
     ######################################################
     #    Configuration Functions
     ######################################################
@@ -104,7 +104,7 @@ class MMFE8:
         reg = self.VMM[current_vmm].get_channel_val()
         reglist = list(self.VMM[current_vmm].reg.flatten())
         globalreglist = list(self.VMM[current_vmm].globalreg.flatten())
-        fullreg = reglist[::-1] + globalreglist[::-1] 
+        fullreg = reglist[::-1] + globalreglist[::-1]
         chars = []
         MESSAGE = ""
         n=0
@@ -118,8 +118,8 @@ class MMFE8:
             dummyReg = bytelist[::-1]
             #string = "A" + str(b)
             for bit in range(32):
-                self.byteint[b] += int(dummyReg[bit])*pow(2, 31-bit)             
-        StartMsg =  "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[0]) #.decode('hex')      
+                self.byteint[b] += int(dummyReg[bit])*pow(2, 31-bit)
+        StartMsg =  "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[0]) #.decode('hex')
         for c in range(0,51):
             string = "A" + str(c+1)
             myVal = int(self.byteint[c])
@@ -132,14 +132,14 @@ class MMFE8:
                 StartMsg = "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[w])
                 self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
                 #if self.myDebug:
-                #    print "Sent Message to " + self.UDP_IP 
-                #    print MSGsend #+ "  {0}".format(m)    
+                #    print "Sent Message to " + self.UDP_IP
+                #    print MSGsend #+ "  {0}".format(m)
         MSGsend = StartMsg + MESSAGE + '\0' + '\n'
         self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
         #if self.myDebug:
-        #    print "Sent Message to " + self.UDP_IP 
+        #    print "Sent Message to " + self.UDP_IP
         #    print MSGsend
-        print "\nWrote to Config Registers\n" 
+        print "\nWrote to Config Registers\n"
         self.load_IDs()
         #sleep(5)
         #self.daq_readOut()
@@ -154,23 +154,23 @@ class MMFE8:
             MSGsend1 = "W 0x44A10148 {0:02x} \0\n".format(DC)
             self.udp.udp_client(MSGsend1,self.UDP_IP,self.UDP_PORT)
             sleep(1)
-               
+
 
     def read_reg(self,widget):
         # not currently used -- was intended to read the config stream out
-        return        
-             
+        return
+
     def print_config(self, widget):
         current_vmm = int(self.notebook.get_current_page())
         ##create and print full config list
-        self.VMM[current_vmm].entry_SDP_.grab_focus() # gets data for 
+        self.VMM[current_vmm].entry_SDP_.grab_focus() # gets data for
         self.VMM[current_vmm].entry_SDT.grab_focus()
         self.button_print_config.grab_focus()
         reg = self.VMM[current_vmm].get_channel_val()
         reglist = list(self.VMM[current_vmm].reg.flatten())
         globalreglist = list(self.VMM[current_vmm].globalreg.flatten())
         fullreg = reglist[::-1] + globalreglist[::-1]
-        #self.buf = [] 
+        #self.buf = []
         print "\n\nCONFIG STRING for VMM" + str(current_vmm + 1)
         n=0
         reglist = reglist[::-1]
@@ -186,7 +186,7 @@ class MMFE8:
             byteword = int(byteint)
             self.chnlReg[b] = byteword
             #print hex(self.chnlReg[b])
-            print "0x{0:08x}  reg {1:2d}".format(byteword,n)  
+            print "0x{0:08x}  reg {1:2d}".format(byteword,n)
             #except:  IOError as e:
             #    myMsg = "I/O Error"# Reading Ctrl Reg 3:\n{1}".format(e.errno, e.strerror)
             #    #    self.on_erro(widget, myMsg)
@@ -256,7 +256,7 @@ class MMFE8:
                         BCid2 = binstr.int_to_b(BCIDgray,16)
                         myBCid = binstr.b_gray_to_bin(BCid2)
                         myIntBCid = binstr.b_to_int(myBCid)
-                        fifohigh = fifohigh >> 12  # later we will get the turn number 	 
+                        fifohigh = fifohigh >> 12  # later we will get the turn number
                     #print dataList[n+1] + " "+ dataList[n] + ", addr=" + str(addr) + \
                     #               ", amp="+str(amp) + ", time="+str(timing) + ", BCid= " + str(myIntBCid)
                     print dataList[n] + " "+ dataList[n+1] + ", addr=" + str(addr) + \
@@ -268,32 +268,38 @@ class MMFE8:
                     n=n+2
                 else:
                     print "out of order or no data ="# + str(hex(dataList[n]))
-                    #n= n+1       
+                    #n= n+1
                     n=n+2 #paolo
-					
-					
+
+
     def read_xadc(self, widget):
-        #msg = "w 0x44A10058 1 \0 \n"
-        self.udp.udp_client(msg,self.UDP_IP,self.UDP_PORT)
-        msg = "x \0 \n"  # command to command_handler to send xadc
-        # 1. request pdo from microblaze
-        myXADC = self.udp.udp_client(msg,self.UDP_IP,self.UDP_PORT) 
-        # 2. create an empty list
-        pd = [] 
-        n = 1
-        while n<9:
-            
-            xadcList = myXADC.split()
-            thing1 = int(xadcList[n],16)
-            thing2 = (thing1 * 1.0)/4096.0
-            pd.append(thing2)
-            n = n+1
-            print 'XADC = {0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.4f} {5:.4f} {6:.4f} {7:.4f}'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7]) 
-            s = '{0:.4f}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4:.4f}\t{5:.4f}\t{6:.4f}\t{7:.4f}\n'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7])
+        msg = "x \0 \n"
+        for i in range(100):
+            myXADC = self.udp.udp_client(msg,self.UDP_IP,self.UDP_PORT)
+            pd = []
+            pd_ints = []
+            n = 1
+            while n<9:
+                xadcList = myXADC.split()
+                thing1 = int(xadcList[n],16)
+                pd_ints.append(thing1)
+                thing2 = (thing1 * 1.0)/4096.0
+                pd.append(thing2)
+                n = n+1
+            print 'XADC = {0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.4f} {5:.4f} {6:.4f} {7:.4f}'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7])
+            pulses_on = 0
+            if self.continuous_pulses:
+                pulses_on = 1
+
+            pulse_DAC_value = self.VMM[int(self.notebook.get_current_page())].pulse_DAC_value
             with open('mmfe8-xadc.dat', 'a') as myfile:
-                myfile.write(s)  
+                for j in range(8):
+                    # Note: Saves XADC in mV so that it can be an int.
+                    s = "VMM={0:d}, CKTPrunning={1:d}, PDAC={2:d}, XADC={3:d}\n".format((j+1),
+                                    pulses_on, pulse_DAC_value, pd_ints[j])
+                    myfile.write(s)
         return
-		
+
     def internal_trigger(self, widget):
         if widget.get_active():
             widget.set_label("ON")
@@ -307,10 +313,10 @@ class MMFE8:
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4" 
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = "w 0x44A100F4"
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
     def external_trigger(self, widget):
@@ -327,9 +333,9 @@ class MMFE8:
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
     def leaky_readout(self, widget):
@@ -346,9 +352,9 @@ class MMFE8:
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
 
@@ -359,10 +365,10 @@ class MMFE8:
         except ValueError:
             print "Pulses value must be a decimal integer"
             print
-            return None                
+            return None
         if (value < 0) or (999 < value): #0x3E7
             print "SDP value out of range"
-            print "0 <= Pulses <= 999" 
+            print "0 <= Pulses <= 999"
             return None
         else:
             pulses = value
@@ -372,15 +378,15 @@ class MMFE8:
             pulses_list = map(int, pulses)
             ### add new value to register ###
             for i in range(9,-1,-1):
-                self.readout_runlength[9-i] = pulses_list[i] 
+                self.readout_runlength[9-i] = pulses_list[i]
             tempInt = 0
             for bit in range(32):
                 tempInt += int(self.readout_runlength[bit])*pow(2, bit)
             print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
             message = "w 0x44A100F4"
-            message = message + ' 0x{0:X}'.format(tempInt)  
+            message = message + ' 0x{0:X}'.format(tempInt)
             message = message + '\0' + '\n'
-            self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)  
+            self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
             return
 
     def set_acq_reset_count(self,widget,entry):
@@ -391,14 +397,14 @@ class MMFE8:
         except ValueError:
             print "acq_count value must be a hex number"
             print
-            return None                
+            return None
         if (value < 0) or (0xffffffff < value): #0x3E7
             print "Acq count value out of range"
-            print "0 <= acq_count <= 0xffffffff" 
+            print "0 <= acq_count <= 0xffffffff"
             return None
         else:
             acq_count = value
-            MESSAGE = "W 0x44A10120 " + str(value) + '\0' + '\n'             
+            MESSAGE = "W 0x44A10120 " + str(value) + '\0' + '\n'
             print "Wrote",hex(value),"to counts_to_acq_reset"
             print "counts_to_acq_reset = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
@@ -413,14 +419,14 @@ class MMFE8:
         except ValueError:
             print "acq_hold value must be a hex number"
             print
-            return None                
+            return None
         if (value < 0) or (0xffffffff < value): #0x3E7
             print "Acq hold value out of range"
-            print "0 <= acq_hold <= 0xffffffff" 
+            print "0 <= acq_hold <= 0xffffffff"
             return None
         else:
             acq_count = value
-            MESSAGE = "W 0x44A10124 " + str(value) + '\0' + '\n'             
+            MESSAGE = "W 0x44A10124 " + str(value) + '\0' + '\n'
             print "Wrote",hex(value),"to counts_to_acq_hold"
             print "counts_to_acq_hold = " + ' 0x{0:X}'.format(value) #str(hex(tempInt))
             data = self.udp.udp_client(MESSAGE,self.UDP_IP,self.UDP_PORT)
@@ -431,44 +437,44 @@ class MMFE8:
     ######################################################
     #    Control Functions
     ######################################################
-			
+
     def start(self, widget):
         tempInt = 0
         self.control[2] = 1
         #byteint = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint) 
+            #byteword = int(byteint)
         message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        self.daq_readOut()                   
+        self.daq_readOut()
         sleep(1)
         tempInt = 0
         self.control[2] = 0
         #byteint = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint) 
+            #byteword = int(byteint)
         message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        #self.daq_readOut()                   
+        #self.daq_readOut()
         return
-		
+
     def reset_global(self, widget):
         tempInt = 0
         self.control[0] = 1
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
+        message = "w 0x44A100FC"
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print "VMM Global Reset  " + message  
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT) 
+        print "VMM Global Reset  " + message
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
         tempInt = 0
         self.control[0] = 0
@@ -476,17 +482,17 @@ class MMFE8:
             tempInt += int(self.control[bit])*pow(2, bit)
         message = "w 0x44A100FC"
         message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print "VMM Global Reset  " + message  
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT) 
+        print "VMM Global Reset  " + message
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
-   
+
     def system_init(self, widget):
         tempInt = 0
         self.control[1] = 1
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
@@ -494,8 +500,8 @@ class MMFE8:
         self.control[1] = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
@@ -505,8 +511,8 @@ class MMFE8:
         self.control[3] = 1
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
@@ -514,8 +520,8 @@ class MMFE8:
         self.control[3] = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC" 
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n' 
+        message = "w 0x44A100FC"
+        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
@@ -535,20 +541,20 @@ class MMFE8:
             tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
         print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
         tempInt = 0
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
         print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4" 
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = "w 0x44A100F4"
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
-        return  
-       
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        return
+
     def set_board_ip(self, widget, textBox):
         active = widget.get_active()
         if active < 0:
@@ -569,7 +575,7 @@ class MMFE8:
                 #self.vmm_cfg_sel[28+i] = mmfe_ID_list[i]
                 self.vmm_cfg_sel[11-i] = mmfe_ID_list[i]
             print "MMFE8 ID= " + str(self.mmfeID)
-            
+
     ##==============================================##
 
     def set_display(self, widget): #, textBox
@@ -592,9 +598,9 @@ class MMFE8:
             tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
         print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
 
     def set_display_no_enet(self, widget): #, textBox
@@ -617,15 +623,15 @@ class MMFE8:
             tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
         #print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
         message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        #self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        #self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         return
-       
+
     ######################################################
     #    vmm Readout select Functions
     ######################################################
-    
+
     def readoutVmm1_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -697,7 +703,7 @@ class MMFE8:
         ### button is not checked ###
             self.readout_runlength[23] = 0
         self.load_IDs()
-		
+
     ######################################################
     #    Reset / config vmm select Functions
     ######################################################
@@ -731,7 +737,7 @@ class MMFE8:
             self.vmm_cfg_sel[2] = 0
         self.load_IDs()
         return
-    
+
     def Vmm4Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -741,7 +747,7 @@ class MMFE8:
             self.vmm_cfg_sel[3] = 0
         self.load_IDs()
         return
-    
+
     def Vmm5Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -751,7 +757,7 @@ class MMFE8:
             self.vmm_cfg_sel[4] = 0
         self.load_IDs()
         return
-    
+
     def Vmm6Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -761,7 +767,7 @@ class MMFE8:
             self.vmm_cfg_sel[5] = 0
         self.load_IDs()
         return
-    
+
     def Vmm7Reset_callback(self, widget):
         if widget.get_active():
         ### button is checked ###
@@ -791,7 +797,7 @@ class MMFE8:
         if len(fname) <= 0:
             print "No Output .dat File Given"
             print
-            return None 
+            return None
         self.CRLoop_Output_dat = fname
         print "**CR-Loop** Setting output .dat filename to: %s" % fname
         print
@@ -801,7 +807,7 @@ class MMFE8:
         if len(fname) <= 0:
             print "No Output .root File Given"
             print
-            return None 
+            return None
         self.CRLoop_Output_root = fname
         print "**CR-Loop** Setting output .root filename to: %s" % fname
         print
@@ -817,12 +823,12 @@ class MMFE8:
         if (val < 1) or (998 < val):
             print "Number of pulses must be between 1 and 998"
             print
-            return None 
+            return None
         self.CRLoop_Npulse = val
         print "**CR-Loop** Setting Number of Pulses: %s" % str(val)
         print
 
-        
+
     def fix_tpDAC(self,widget,entry):
         try:
             entry = entry.get_text()
@@ -830,11 +836,11 @@ class MMFE8:
         except ValueError:
             print "Test Pulse DAC must be decimal integer"
             print
-            return None                
+            return None
         if (value < 0) or (1023 < value):
             print "Test Pulse DAC out of range"
             print
-            return None 
+            return None
 
         self.CRLoop_tpDAC = [value]
         print "**CR-Loop** Setting Test Pulse DAC: %s" % str(value)
@@ -852,11 +858,11 @@ class MMFE8:
             print "Test Pulse DAC must be decimal integer"
             print
             return None
-        for x in val:               
+        for x in val:
             if (x < 0) or (1023 < x):
                 print "Test Pulse DAC out of range"
                 print
-                return None 
+                return None
 
         self.CRLoop_tpDAC = val
         tpDACstr = str(val[0])
@@ -872,11 +878,11 @@ class MMFE8:
         except ValueError:
             print "Threshold DAC must be decimal integer"
             print
-            return None                
+            return None
         if (value < 0) or (1023 < value):
             print "Threshold DAC out of range"
             print
-            return None 
+            return None
 
         self.CRLoop_thDAC = [value]
         print "**CR-Loop** Setting Threshold DAC %s" % str(value)
@@ -894,11 +900,11 @@ class MMFE8:
             print "Threshold DAC must be decimal integer"
             print
             return None
-        for x in val:               
+        for x in val:
             if (x < 0) or (1023 < x):
                 print "Threshold DAC out of range"
                 print
-                return None 
+                return None
 
         self.CRLoop_thDAC = val
         thDACstr = str(val[0])
@@ -914,11 +920,11 @@ class MMFE8:
         except ValueError:
             print "Channel must be decimal integer"
             print
-            return None                
+            return None
         if (value < 1) or (64 < value):
             print "Channel out of range"
             print
-            return None 
+            return None
 
         self.CRLoop_chan = [value]
         print "**CR-Loop** Setting Channel: %s" % str(value)
@@ -936,11 +942,11 @@ class MMFE8:
             print "Channel must be decimal integer"
             print
             return None
-        for x in val:               
+        for x in val:
             if (x < 1) or (64 < x):
                 print "Channel out of range"
                 print
-                return None 
+                return None
         self.CRLoop_chan = val
         CHstr = str(val[0])
         for x in val[1:]:
@@ -963,11 +969,11 @@ class MMFE8:
         except ValueError:
             print "VMM must be decimal integer"
             print
-            return None                
+            return None
         if (value < 1) or (8 < value):
             print "VMM out of range"
             print
-            return None 
+            return None
 
         self.CRLoop_VMM = [value]
         print "**CR-Loop** Setting VMMs: %s" % str(value)
@@ -985,11 +991,11 @@ class MMFE8:
             print "VMM must be decimal integer"
             print
             return None
-        for x in val:               
+        for x in val:
             if (x < 1) or (8 < x):
                 print "VMM out of range"
                 print
-                return None 
+                return None
         self.CRLoop_VMM = val
         VMMstr = str(val[0])
         for x in val[1:]:
@@ -1004,7 +1010,7 @@ class MMFE8:
         for x in val[1:]:
            VMMstr += ", "+str(x)
         print "**CR-Loop** Setting VMMs: %s" % VMMstr
-        print 
+        print
 
     def fix_TACslope(self, widget):
         active = widget.get_active()
@@ -1048,6 +1054,13 @@ class MMFE8:
         print "**CR-Loop** Setting loop over Delay Times"
         print
 
+    """def button_toggle_activity(self, widget, button):
+        if not button.get_sensitive():
+            stored_button_state = button.get_active()
+            button.set_active(False)
+        else:
+            button.set_active(stored_button_state)"""
+
     def activate_channel(self, iVMM, ich):
         if iVMM < 1 or iVMM > 8:
             return None
@@ -1057,7 +1070,7 @@ class MMFE8:
         self.VMM[iVMM-1].chan_list[ich-1].button_ST.set_active(True)
         print "**CR-Loop** Activating Channel %d in VMM %d" % (ich,iVMM)
         print
-        
+
     def deactivate_channel(self, iVMM, ich):
         if iVMM < 1 or iVMM > 8:
             return None
@@ -1073,15 +1086,35 @@ class MMFE8:
             return None
         self.VMM[iVMM-1].chan_list[ich-1].button_SM.set_active(False)
         self.VMM[iVMM-1].chan_list[ich-1].button_ST.set_active(False)
-        
+
+    def CR_xADC_readout(self, tpDAC, active_VMM):
+        # set TP DAC
+        vmm = self.VMM[active_VMM]
+
+        vmm.entry_SDP_.set_text(str(tpDAC))
+        vmm.entry_SDP_.activate()
+
+        # Store current vmm state
+        stored_SBMX = vmm.check_button_SBMX.get_active()
+        stored_SCMX = vmm.check_button_SCMX.get_active()
+        stored_SM_combo = vmm.combo_SM.get_active()
+        stored_internal_trigger = self.readout_runlength[24]
+
+        # Set xADC readout vmm state
+        vmm.check_button_SBMX.set_active(True)
+        vmm.check_button_SCMX.set_active(False)
+        vmm.combo_SM.set_active(2)
+        self.readout_runlength[24] = 0
+
+
     def run_CRLoop(self, widget):
         if widget.get_active() is False:
             return
         self.button_RunCR.set_sensitive(False)
 
         print "**CR-Loop** >>> RUNNING CALIBRATION ROUTINE <<<"
-        print 
-        
+        print
+
         # delete existing .dat file for new writing
         cmd = "rm -f %s" % self.CRLoop_Output_dat
         os.system(cmd)
@@ -1096,7 +1129,7 @@ class MMFE8:
 
         # VMMs to be enabled
         #self.Cur_VMM = Loop_VMM
-        
+
         # initialize system for looping
         self.init_CRLoop()
 
@@ -1121,7 +1154,7 @@ class MMFE8:
                                     for ivmm in range(1,9):
                                         for ich in range(1,65):
                                             self.unmask_channel(ivmm,ich)
-                                
+
                                     # VMM loop
                                     for ivmm in self.Cur_VMM:
                                         # set channel
@@ -1142,7 +1175,7 @@ class MMFE8:
 
                                         # set peak time
                                         self.VMM[ivmm-1].combo_ST.set_active(peak)
-                                    
+
                                     # masked channels
                                     for ivmm in self.Cur_VMM:
                                         if ivmm is 1:
@@ -1161,14 +1194,17 @@ class MMFE8:
 
                                     # run configure and run DAQ for this configuration
                                     self.run_CRLoop_point()
+            # If set to read out test pulse DAC on xADC, do so each time.
+            if self.button_tpDAC_xADC.get_active() and self.button_tpDAC_xADC.get_sensitive():
+                self.CR_xADC_readout(tpDAC, int(self.notebook.get_current_page()))
 
         # create .root file from .dat file (requires dat2root in path)
         cmd = "dat2root %s -o %s" % (self.CRLoop_Output_dat,self.CRLoop_Output_root)
-        os.system(cmd) 
+        os.system(cmd)
 
         print "**CR-Loop** >>> FINISHED CALIBRATION ROUTINE <<<"
-        print 
-                                
+        print
+
         self.button_RunCR.set_sensitive(True)
         self.button_RunCR.set_active(False)
 
@@ -1178,7 +1214,7 @@ class MMFE8:
         self.readout_runlength[24] = 0
 
         # print "**CR-Loop**    ...turning on selected VMM readout"
-        # # turn off readout for all VMMs 
+        # # turn off readout for all VMMs
         # for i in range(1,9):
         #     self.readout_runlength[15+i] = 0
         # # Turn on readout for selected VMMs
@@ -1186,20 +1222,20 @@ class MMFE8:
         #     self.readout_runlength[15+i] = 1
 
         # print "**CR-Loop**    ...turning on selected VMM load"
-        # # turn off load/reset for all VMMs 
+        # # turn off load/reset for all VMMs
         # for i in range(1,9):
         #     self.vmm_cfg_sel[i-1] = 0
         # # turn on load/reset for selected VMMs
         # for i in self.Cur_VMM:
         #     self.vmm_cfg_sel[i-1] = 1
-            
+
         # self.load_IDs()
 
         # VMMstr = str(self.Cur_VMM[0])
         # for x in self.Cur_VMM[1:]:
         #    VMMstr += ", "+str(x)
         # print "**CR-Loop** ...Enabled VMMs for readout/reset/load: %s" % VMMstr
-        # print 
+        # print
 
         # load number of pulses
         self.entry_pulses.set_text(str(self.CRLoop_Npulse))
@@ -1208,12 +1244,12 @@ class MMFE8:
         # load acquisition reset and hold counts
         self.entry_acq_reset_count.activate()
         self.entry_acq_reset_hold.activate()
-    
+
     def run_CRLoop_point(self):
         VMMstr = str(self.Cur_VMM[0])
         for x in self.Cur_VMM[1:]:
            VMMstr += ", "+str(x)
-        print 
+        print
         print "**CR-Loop** Initializing calibration point:"
         print "**CR-Loop**    Channel = %d" % self.Cur_chan
         print "**CR-Loop**    Test Pulse DAC = %d" % self.Cur_tpDAC
@@ -1222,9 +1258,9 @@ class MMFE8:
         print "**CR-Loop**    TAC Slope = %d" % self.Cur_TACslope
         print "**CR-Loop**    Peak Time = %d" % self.Cur_peaktime
         print "**CR-Loop**    VMMs = %s" % VMMstr
-        
+
         print "**CR-Loop**    ...turning on selected VMM readout"
-        # turn off readout for all VMMs 
+        # turn off readout for all VMMs
         for i in range(1,9):
             self.readout_runlength[15+i] = 0
         # Turn on readout for selected VMMs
@@ -1232,13 +1268,13 @@ class MMFE8:
             self.readout_runlength[15+i] = 1
 
         print "**CR-Loop**    ...turning on selected VMM load"
-        # turn off load/reset for all VMMs 
+        # turn off load/reset for all VMMs
         for i in range(1,9):
             self.vmm_cfg_sel[i-1] = 0
         # turn on load/reset for selected VMMs
         for i in self.Cur_VMM:
             self.vmm_cfg_sel[i-1] = 1
-            
+
         self.load_IDs()
 
         #self.init_CRLoop()
@@ -1250,11 +1286,11 @@ class MMFE8:
         # global reset
         print "**CR-Loop** ...Gobal Reset"
         self.button_resetVMM.clicked()
-        
+
         # system reset
         print "**CR-Loop** ...System Reset"
         self.button_SystemInit.clicked()
-        
+
         # VMM load
         print "**CR-Loop** ...Loading VMMs"
         self.button_SystemLoad.clicked()
@@ -1278,19 +1314,19 @@ class MMFE8:
         tempInt = 0
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4" 
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = "w 0x44A100F4"
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
         self.readout_runlength[24] = 0
         tempInt = 0
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4" 
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = "w 0x44A100F4"
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
 
         # system reset again
         print "**CR-Loop** ...System Reset"
@@ -1299,33 +1335,33 @@ class MMFE8:
         # load correct number of pulses
         self.entry_pulses.set_text(str(self.CRLoop_Npulse))
         self.entry_pulses.activate()
-        
+
         # internal trigger
         self.readout_runlength[24] = 1
         tempInt = 0
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4" 
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = "w 0x44A100F4"
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
         sleep(1)
 
         # Start DAQ
         print "**CR-Loop** ...Starting data-taking"
         self.start_daq_CRLoop()
-             
+
         self.readout_runlength[24] = 0
         tempInt = 0
         for bit in range(32):
             tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4" 
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = "w 0x44A100F4"
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)   
+        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
 
         print "**CR-Loop** Calibration Point Completed"
-        print 
+        print
 
     def write_VMM_CRLoop(self):
         # get first enabled VMM as "current"
@@ -1342,7 +1378,7 @@ class MMFE8:
         reg = self.VMM[current_vmm].get_channel_val()
         reglist = list(self.VMM[current_vmm].reg.flatten())
         globalreglist = list(self.VMM[current_vmm].globalreg.flatten())
-        fullreg = reglist[::-1] + globalreglist[::-1] 
+        fullreg = reglist[::-1] + globalreglist[::-1]
         chars = []
         MESSAGE = ""
         n=0
@@ -1356,8 +1392,8 @@ class MMFE8:
             dummyReg = bytelist[::-1]
             #string = "A" + str(b)
             for bit in range(32):
-                self.byteint[b] += int(dummyReg[bit])*pow(2, 31-bit)             
-        StartMsg =  "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[0]) #.decode('hex')      
+                self.byteint[b] += int(dummyReg[bit])*pow(2, 31-bit)
+        StartMsg =  "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[0]) #.decode('hex')
         for c in range(0,51):
             string = "A" + str(c+1)
             myVal = int(self.byteint[c])
@@ -1368,12 +1404,12 @@ class MMFE8:
                 MESSAGE = ""
                 m = m + 24
                 StartMsg = "W" +' 0x{0:08X}'.format(self.vmmBaseConfigAddr[w])
-                self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)                                                                                                                            
+                self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
         MSGsend = StartMsg + MESSAGE + '\0' + '\n'
         self.udp.udp_client(MSGsend,self.UDP_IP,self.UDP_PORT)
         print "\nWrote to Config Registers\n"
         self.load_IDs()
-        
+
         return
 
     def start_daq_CRLoop(self):
@@ -1383,9 +1419,9 @@ class MMFE8:
         #byteint = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint) 
+            #byteword = int(byteint)
         message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
@@ -1393,27 +1429,27 @@ class MMFE8:
 
         print "**CR-Loop** ...Starting DAQ"
         self.daq_readOut_CRLoop()
-        print "**CR-Loop** ...DAQ finished"            
+        print "**CR-Loop** ...DAQ finished"
 
         tempInt = 0
         self.control[2] = 0
         #byteint = 0
         for bit in range(32):
             tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint) 
+            #byteword = int(byteint)
         message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)  
+        message = message + ' 0x{0:X}'.format(tempInt)
         message = message + '\0' + '\n'
         print message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        
+
     def daq_readOut_CRLoop(self):
         # data word counting for early termination
-        
+
         daq_count = []
         for ivmm in self.Cur_VMM:
             daq_count += [0]
-        
+
         while True:
             fifoCnt = 0
             r=10
@@ -1458,7 +1494,7 @@ class MMFE8:
                     fifo32 = int(dataList[n],16)
                     if fifo32 > 0:
                         fifo32 = fifo32 >> 2     # get rid of first 2 bits (threshold)
-                        
+
                         CHword = (fifo32 & 63) + 1 # get channel number as on GUI
 
                         fifo32 = fifo32 >> 6     # get rid of address
@@ -1466,7 +1502,7 @@ class MMFE8:
 
                         fifo32 = fifo32 >> 10
                         TDO = fifo32 & 255
-                        
+
                         fifo32 = fifo32 >> 8  # we will later check for vmm number
                         VMMword = (fifo32 & 7) + 1 # get vmm number
 
@@ -1478,7 +1514,7 @@ class MMFE8:
                             BCid2 = binstr.int_to_b(BCIDgray,16)
                             myBCid = binstr.b_gray_to_bin(BCid2)
                             BCID = binstr.b_to_int(myBCid)
-                            fifohigh = fifohigh >> 12  # later we will get the turn number 	 
+                            fifohigh = fifohigh >> 12  # later we will get the turn number
 
                         output_string  = "VMM=%s" % str(VMMword)
                         output_string += " CHword=%s" % str(CHword)
@@ -1491,9 +1527,9 @@ class MMFE8:
                         output_string += " Delay=%s" % str(self.Cur_delay)
                         output_string += " TACslope=%s" % str(self.Cur_TACslope)
                         output_string += " PeakTime=%s" % str(self.Cur_peaktime)
-                        
+
                         print dataList[n] + " "+ dataList[n+1] + ", " + output_string
-                     
+
                         with open(self.CRLoop_Output_dat, 'a') as myfile:
                             myfile.write(output_string+'\n')
 
@@ -1515,9 +1551,9 @@ class MMFE8:
                         n=n+2
                     else:
                         print "out of order or no data ="# + str(hex(dataList[n]))
-                        #n= n+1       
+                        #n= n+1
                         n=n+2 #paolo
-        
+
     #######################################################################
     #
     #
@@ -1528,7 +1564,7 @@ class MMFE8:
 
     def __init__(self):
         print "loading MMFE8 Calibration Routine GUI..."
-        print 
+        print
         self.tv = gtk.TextView()
         self.tv.set_editable(False)
         self.tv.set_wrap_mode(gtk.WRAP_WORD)
@@ -1540,7 +1576,7 @@ class MMFE8:
 
         self.window.set_title("MMFE8 vmm2 Calibration Routine GUI (v1.0.0)")
         self.window.set_border_width(0)
-        
+
         self.notebook = gtk.Notebook()
         self.notebook.set_size_request(-1,0)
         self.notebook.set_tab_pos(gtk.POS_TOP)
@@ -1564,7 +1600,7 @@ class MMFE8:
         # ipAddr will be obtained from an xml file in the future
         self.ipAddr = ["127.0.0.1","192.168.0.130","192.168.0.101","192.168.0.102","192.168.0.103","192.168.0.104","192.168.0.105","192.168.0.106",
               "192.168.0.107","192.168.0.108","192.168.0.109","192.168.0.110","192.168.0.111","192.168.0.112","192.168.0.167"]
-        # each is the starting address for the 51 config regs for each vmm 
+        # each is the starting address for the 51 config regs for each vmm
         self.mmfeID = 0
         self.vmmBaseConfigAddr = [0x44A10020,0x44A10038,0x44A10050,0x44A10068,
                          0x44A10080,0x44A10098,0x44A100B0,0x44A100C8,0x44A100E0]
@@ -1581,13 +1617,13 @@ class MMFE8:
         self.admux = np.zeros((32), dtype=int)                          #0x44A100F8  #admux                     #write
         self.control = np.zeros((32), dtype=int)                 		#0x44A100FC  #was vmm_global_reset      #reset & vmm_gbl_rst_i & vmm_cfg_en_vec( 7 downto 0)
         #self.system_init = np.zeros((32), dtype=int)                   #0x44A10100  #axi_reg_60( 0)            #original reset
-        #self.userRegs = userRegs()                                     #0x44A10104,08,0C,00,14                 #user_reg_1 #user_reg_2 #user_reg_3 #user_reg_4         
+        #self.userRegs = userRegs()                                     #0x44A10104,08,0C,00,14                 #user_reg_1 #user_reg_2 #user_reg_3 #user_reg_4
         self.userRegs = userRegs()                                      #0x44A10104,08,0C,00,14                 #user_reg_1 #user_reg_2 #user_reg_3 #user_reg_4 #user_reg_5
         self.ds2411_low = np.zeros((32), dtype=int)                     #0x44A10118  #DS411_low                 #Low
         self.ds2411_high = np.zeros((32), dtype=int)                    #0x44A1011C  #DS411_high                #High
         self.counts_to_acq_reset = np.zeros((32), dtype=int)            #0x44A10120  #counts_to_acq_reset       #0 to FFFF_FFFF #0=Not Used
         self.counts_to_acq_hold = np.zeros((32), dtype=int)            #0x44A10120  #counts_to_hold_acq_reset       #0 to FFFF_FFFF #0=Not Used
-        self.terminate = 0                    
+        self.terminate = 0
         self.UDP_PORT = 50001
         self.UDP_IP = ""
         self.chnlReg = np.zeros((51), dtype=int)
@@ -1595,9 +1631,9 @@ class MMFE8:
         self.byteword = np.zeros((32), dtype=int)
 
         ####################################################
-        ##                    GUI   
-        ##                   GLOBAL  
-        ##                   BUTTONS 
+        ##                    GUI
+        ##                   GLOBAL
+        ##                   BUTTONS
         ####################################################
         #print "loading buttons..."
 
@@ -1669,7 +1705,7 @@ class MMFE8:
         self.box_acq_reset_count.pack_start(self.label_acq_reset_count, expand=False)
         self.box_acq_reset_count.pack_start(self.entry_acq_reset_count, expand=False)
         self.box_acq_reset_count.pack_start(self.label_acq_reset_count2, expand=False)
-        
+
         self.label_acq_reset_hold = gtk.Label("acq_rst_hold")
         self.label_acq_reset_hold.set_markup('<span color="Navy"><b>      acq_reset_hold:      </b></span>')
         self.label_acq_reset_hold.set_justify(gtk.JUSTIFY_LEFT)
@@ -1686,7 +1722,7 @@ class MMFE8:
         # set default
         self.entry_acq_reset_hold.set_text("40")
         # self.entry_acq_reset_hold.activate()
-        
+
         self.box_acq_reset_hold = gtk.HBox()
         self.box_acq_reset_hold.pack_start(self.label_acq_reset_hold, expand=False)
         self.box_acq_reset_hold.pack_start(self.entry_acq_reset_hold, expand=False)
@@ -1724,7 +1760,7 @@ class MMFE8:
         self.check_button_vmm6_reset.connect("toggled", self.Vmm6Reset_callback)
         self.check_button_vmm7_reset = gtk.CheckButton()
         self.check_button_vmm7_reset.connect("toggled", self.Vmm7Reset_callback)
-        self.check_button_vmm8_reset = gtk.CheckButton()        
+        self.check_button_vmm8_reset = gtk.CheckButton()
         self.check_button_vmm8_reset.connect("toggled", self.Vmm8Reset_callback)
         self.label_vmmReset_1 = gtk.Label("1")
         self.label_vmmReset_2 = gtk.Label("2")
@@ -1755,13 +1791,13 @@ class MMFE8:
 
 
         self.label_But_Space1 = gtk.Label(" ")
-        self.label_But_Space2 = gtk.Label(" ")        
+        self.label_But_Space2 = gtk.Label(" ")
         self.label_But_Space3 = gtk.Label(" ")
         self.label_But_Space4 = gtk.Label(" ")
-        self.label_But_Space5 = gtk.Label(" ") 
+        self.label_But_Space5 = gtk.Label(" ")
         self.label_But_Space8 = gtk.Label(" ")
         self.label_But_Space9 = gtk.Label(" ")
-        self.label_But_Space10 = gtk.Label(" ")      
+        self.label_But_Space10 = gtk.Label(" ")
 
 
         self.label_vmmReadoutMask = gtk.Label("vmm2")
@@ -1783,7 +1819,7 @@ class MMFE8:
         self.check_button_vmm7_readout = gtk.CheckButton()
         self.check_button_vmm7_readout.connect("toggled", self.readoutVmm7_callback)
         self.check_button_vmm8_readout = gtk.CheckButton()
-        self.check_button_vmm8_readout.connect("toggled", self.readoutVmm8_callback)        
+        self.check_button_vmm8_readout.connect("toggled", self.readoutVmm8_callback)
         self.label_vmmReadout_1 = gtk.Label("1")
         self.label_vmmReadout_2 = gtk.Label("2")
         self.label_vmmReadout_3 = gtk.Label("3")
@@ -1815,41 +1851,41 @@ class MMFE8:
 
         self.button_write = gtk.Button("Write to Config Buffer")
         self.button_write.child.set_justify(gtk.JUSTIFY_CENTER)
-        self.button_write.set_size_request(-1,-1)        
+        self.button_write.set_size_request(-1,-1)
         self.button_write.connect("clicked",self.write_vmmConfigRegisters)
-        
+
         self.button_read_reg = gtk.Button("READ Config\nRegisters")
         self.button_read_reg.set_sensitive(False)
         self.button_read_reg.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_read_reg.set_size_request(-1,-1)
         self.button_read_reg.connect("clicked",self.read_reg)
-        
+
         self.label_internal_trigger =  gtk.Label("Internal Trigger:    ")
         self.label_internal_trigger.set_markup('<span color="blue"><b>Internal Trigger:    </b></span>')
         self.button_internal_trigger = gtk.ToggleButton("OFF")
         self.button_internal_trigger.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_internal_trigger.connect("clicked",self.internal_trigger)
         self.button_internal_trigger.set_size_request(-1,-1)
-        
+
         self.label_external_trigger =  gtk.Label("External Trigger:    ")
         self.label_external_trigger.set_markup('<span color="blue"><b>External Trigger:    </b></span>')
         self.button_external_trigger = gtk.ToggleButton("OFF")
         self.button_external_trigger.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_external_trigger.connect("clicked",self.external_trigger)
         self.button_external_trigger.set_size_request(-1,-1)
-        
+
         self.label_leaky_readout =  gtk.Label("Leaky Readout Data:    ")
         self.label_leaky_readout.set_markup('<span color="blue"><b>Leaky Readout:    </b></span>')
         self.button_leaky_readout = gtk.ToggleButton("OFF")
         self.button_leaky_readout.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_leaky_readout.connect("clicked",self.leaky_readout)
         self.button_leaky_readout.set_size_request(-1,-1)
-        
+
         self.button_read_XADC = gtk.Button("Read XADC")
         self.button_read_XADC.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_read_XADC.connect("clicked",self.read_xadc)
         self.button_read_XADC.set_size_request(-1,-1)
-        
+
         self.button_print_config = gtk.Button("Print Config Load")
         self.button_print_config.child.set_justify(gtk.JUSTIFY_CENTER)
         self.button_print_config.set_size_request(-1,-1)
@@ -1865,13 +1901,13 @@ class MMFE8:
         self.entry_mmfeID.set_width_chars(6)
         self.entry_mmfeID.set_text(str(self.mmfeID))
         self.entry_mmfeID.set_editable(False)
-        
+
         self.label_IP = gtk.Label("IP ADDRESS")
         self.label_IP.set_markup('<span color="Navy"><b>MMFE8\nIP ADDRESS</b></span>')
         self.label_IP.set_justify(gtk.JUSTIFY_CENTER)
         self.combo_IP = gtk.combo_box_new_text()
         for i in range (len(self.ipAddr)):
-            self.combo_IP.append_text(self.ipAddr[i]) 
+            self.combo_IP.append_text(self.ipAddr[i])
 
         self.combo_IP.set_active(0)
         self.combo_IP.connect("changed",self.set_board_ip, self.entry_mmfeID)
@@ -1895,9 +1931,9 @@ class MMFE8:
 
         self.button_setIDs = gtk.Button("Set IDs")
         self.button_setIDs.child.set_justify(gtk.JUSTIFY_CENTER)
-        self.button_setIDs.set_size_request(-1,-1)        
+        self.button_setIDs.set_size_request(-1,-1)
         self.button_setIDs.connect("clicked",self.set_IDs)
-        
+
         self.label_mmfe8_id = gtk.Label("mmfe8")
         self.label_mmfe8_id.set_markup('<span color="Navy"><b>                     MMFE8 ID   </b></span>')
         self.label_mmfe8_id.set_justify(gtk.JUSTIFY_CENTER)
@@ -1917,19 +1953,19 @@ class MMFE8:
         #self.box_labelID.pack_start(self.label_vmm2_id,expand=False)
         #self.box_labelID.pack_start(self.qs_table,expand=False)
 
-        self.label_Space22 = gtk.Label("  ") 
+        self.label_Space22 = gtk.Label("  ")
 
         self.box_ResetID = gtk.VBox()
         self.box_ResetID.pack_start(self.label_vmmGlobal_Reset,expand=False)
         self.box_ResetID.pack_start(self.vmmReset_table1,expand=False)
         self.box_ResetID.pack_start(self.button_resetVMM,expand=False)
-        #self.box_ResetID.pack_start(self.label_Space22,expand=False)   
+        #self.box_ResetID.pack_start(self.label_Space22,expand=False)
 
         self.box_ReadoutMask = gtk.VBox()
         self.box_ReadoutMask.pack_start(self.label_vmmReadoutMask,expand=False)
         self.box_ReadoutMask.pack_start(self.vmmReadout_table1,expand=False)
         #self.box_ResetID.pack_start(self.button_resetVMM,expand=False)
-        #self.box_ResetID.pack_start(self.label_Space22,expand=False)   
+        #self.box_ResetID.pack_start(self.label_Space22,expand=False)
 
         self.box_vmmID = gtk.HBox()
         self.box_vmmID.pack_start(self.button_setIDs,expand=False) #
@@ -1958,8 +1994,8 @@ class MMFE8:
         ################################################################################################
         self.frame_Loop = gtk.Frame()
         self.frame_Loop.set_shadow_type(gtk.SHADOW_OUT)
-        
-        map = self.frame_Loop.get_colormap() 
+
+        map = self.frame_Loop.get_colormap()
         bkg_color = map.alloc_color("firebrick4")
         txt_color = map.alloc_color("white")
         wait_color = map.alloc_color("honeydew")
@@ -1983,9 +2019,9 @@ class MMFE8:
         style_run.base[gtk.STATE_INSENSITIVE] = run_color
         style_run.fg[gtk.STATE_INSENSITIVE]   = txt_color
         style_run.text[gtk.STATE_INSENSITIVE] = txt_color
-        
+
         self.frame_Loop.set_style(style_frame)
-        
+
         self.buttons_Loop = gtk.VBox()
         self.buttons_Loop.set_spacing(5)
         self.buttons_Loop.set_border_width(5)
@@ -2000,7 +2036,7 @@ class MMFE8:
         self.label_Loop.set_justify(gtk.JUSTIFY_CENTER)
         self.label_Loop.set_style(style_frame)
         self.buttons_Loop.pack_start(self.label_Loop,expand=True)
-        
+
         self.button_RunCR = gtk.ToggleButton(">>>>>><<<<<<        Run Routine      >>>>>><<<<<<")
         self.button_RunCR.connect("clicked", self.run_CRLoop)
         self.button_RunCR.set_style(style_run)
@@ -2030,7 +2066,7 @@ class MMFE8:
         self.box_button_outputdat.set_style(style_frame)
         self.box_outputdat.set_style(style_frame)
         self.buttons_Loop.pack_start(self.box_outputdat,expand=True)
-        
+
         # set output .root filename
         self.label_outputroot = gtk.Label("outputroot")
         self.label_outputroot.set_markup('<span color="white"><b>    Output .root filename   </b></span>')
@@ -2072,7 +2108,7 @@ class MMFE8:
         self.box_button_set_pulses.set_style(style_frame)
         self.box_set_pulses.set_style(style_frame)
         self.buttons_Loop.pack_start(self.box_set_pulses,expand=True)
-        
+
         # fix channel
         self.button_fix_chan = gtk.Entry(max=2)
         self.button_fix_chan.set_editable(True)
@@ -2092,7 +2128,7 @@ class MMFE8:
         self.button_loop_allchan = gtk.CheckButton("All Channels")
         self.button_loop_allchan.connect("toggled", self.loop_all_chan)
         loop_buttons = [self.button_loop_chan,self.button_loop_allchan]
-        
+
         self.frame_chan = loop_pair("Channels",self.button_fix_chan,loop_buttons)
         self.buttons_Loop.pack_start(self.frame_chan.frame,expand=True)
 
@@ -2103,7 +2139,7 @@ class MMFE8:
         self.button_fix_VMM.set_text("15")
         self.button_fix_VMM.connect("activate", self.fix_VMM, self.button_fix_VMM)
         self.button_fix_VMM.activate()
-        
+
         # loop VMM
         self.button_loop_VMM = gtk.Entry()
         self.button_loop_VMM.set_editable(True)
@@ -2115,13 +2151,13 @@ class MMFE8:
         self.button_loop_all_VMM = gtk.CheckButton("All VMMs")
         self.button_loop_all_VMM.connect("toggled", self.loop_all_VMM)
         loop_buttons = [self.button_loop_VMM,self.button_loop_all_VMM]
-        
+
         self.frame_VMM = loop_pair("VMM's",self.button_fix_VMM,loop_buttons)
         self.buttons_Loop.pack_start(self.frame_VMM.frame,expand=True)
 
         # fix Delay Time
         self.button_fix_delay = gtk.combo_box_new_text()
-        self.button_fix_delay.append_text("0 st")        
+        self.button_fix_delay.append_text("0 st")
         self.button_fix_delay.append_text("1 st")
         self.button_fix_delay.append_text("2 st")
         self.button_fix_delay.append_text("3 st")
@@ -2135,7 +2171,7 @@ class MMFE8:
 
         self.frame_delay = loop_pair("Delay Time",self.button_fix_delay,self.button_loop_delay)
         self.buttons_Loop.pack_start(self.frame_delay.frame,expand=True)
-        
+
         # fix test pulse DAC
         self.button_fix_tpDAC = gtk.Entry(max=3)
         self.button_fix_tpDAC.set_editable(True)
@@ -2150,9 +2186,19 @@ class MMFE8:
         self.button_loop_tpDAC.set_width_chars(8)
         self.button_loop_tpDAC.set_text("100,150")
         self.button_loop_tpDAC.connect("activate", self.loop_tpDAC, self.button_loop_tpDAC)
-        
+
+        # Collect pulse DAC on xADC
+        self.button_tpDAC_xADC = gtk.CheckButton("Collect xADC for test pulse DAC")
+        #tpDAC_buttons = [self.button_loop_tpDAC,self.button_tpDAC_xADC]
+
         self.frame_tpDAC = loop_pair("Test Pulse DAC",self.button_fix_tpDAC,self.button_loop_tpDAC)
+        self.frame_tpDAC.buttonsLoop.pack_end(self.button_tpDAC_xADC)
+        self.frame_tpDAC.connect('fix_signal', self.frame_tpDAC.button_block, self.button_tpDAC_xADC)
+        self.frame_tpDAC.connect('loop_signal', self.frame_tpDAC.button_unblock, self.button_tpDAC_xADC)
+        self.frame_tpDAC.button_Loop.clicked()
+        self.frame_tpDAC.button_Fix.clicked()
         self.buttons_Loop.pack_start(self.frame_tpDAC.frame,expand=True)
+
 
         # fix threshold DAC
         self.button_fix_thDAC = gtk.Entry(max=3)
@@ -2161,20 +2207,20 @@ class MMFE8:
         self.button_fix_thDAC.set_text("220")
         self.button_fix_thDAC.connect("activate", self.fix_thDAC, self.button_fix_thDAC)
         self.button_fix_thDAC.activate()
-        
+
         # loop threshold DAC
         self.button_loop_thDAC = gtk.Entry()
         self.button_loop_thDAC.set_editable(True)
         self.button_loop_thDAC.set_width_chars(8)
         self.button_loop_thDAC.set_text("200,250")
         self.button_loop_thDAC.connect("activate", self.loop_thDAC, self.button_loop_thDAC)
-        
+
         self.frame_thDAC = loop_pair("Threshold DAC",self.button_fix_thDAC,self.button_loop_thDAC)
         self.buttons_Loop.pack_start(self.frame_thDAC.frame,expand=True)
 
         # fix TAC Slope
         self.button_fix_TACslope = gtk.combo_box_new_text()
-        self.button_fix_TACslope.append_text("125 ns (00)")        
+        self.button_fix_TACslope.append_text("125 ns (00)")
         self.button_fix_TACslope.append_text("250 ns (01)")
         self.button_fix_TACslope.append_text("500 ns (10)")
         self.button_fix_TACslope.append_text("1000 ns (11)")
@@ -2190,7 +2236,7 @@ class MMFE8:
 
         # fix Peaking Time
         self.button_fix_peakingtime = gtk.combo_box_new_text()
-        self.button_fix_peakingtime.append_text("200 ns (00)")        
+        self.button_fix_peakingtime.append_text("200 ns (00)")
         self.button_fix_peakingtime.append_text("100 ns (01)")
         self.button_fix_peakingtime.append_text("50 ns (10)")
         self.button_fix_peakingtime.append_text("25 ns (11)")
@@ -2203,14 +2249,14 @@ class MMFE8:
 
         self.frame_peakingtime = loop_pair("Peaking Time",self.button_fix_peakingtime,self.button_loop_peakingtime)
         self.buttons_Loop.pack_start(self.frame_peakingtime.frame,expand=True)
-        
 
-        
-        
+
+
+
 
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         #
-        #                          FRAME 1   
+        #                          FRAME 1
         #
         #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         #print "loading Frame 1..."
@@ -2232,7 +2278,7 @@ class MMFE8:
         label_space_1 = gtk.Label(" ")
         label_space_2 = gtk.Label(" ")
         label_space_3= gtk.Label(" ")
-        
+
         self.box_buttons.pack_start(label_space_1,expand=True)
         self.box_buttons.pack_start(self.label_IP,expand=False)
         self.box_buttons.pack_start(self.combo_IP,expand=False)
@@ -2247,66 +2293,66 @@ class MMFE8:
 
          # calibration routine
         self.box_buttons.pack_start(self.frame_Loop,expand=False)
-        
-        self.box_buttons.pack_start(self.label_But_Space8,expand=True)  
+
+        self.box_buttons.pack_start(self.label_But_Space8,expand=True)
         #self.box_buttons.pack_start(self.button_print_config,expand=False)
         #self.box_buttons.pack_start(self.button_write,expand=False)
 
         #self.box_buttons.pack_start(self.label_But_Space3,expand=True)
-        #self.box_buttons.pack_start(self.frame_Reset,expand=False)  
+        #self.box_buttons.pack_start(self.frame_Reset,expand=False)
         #self.box_buttons.pack_start(self.button_resetVMM,expand=False)
         #self.button_resetVMM.set_sensitive(False)
         #self.box_buttons.pack_start(self.button_SystemInit,expand=False)
         #self.box_buttons.pack_start(self.button_SystemLoad,expand=False)
-        
+
         #self.box_buttons.pack_start(self.label_Space22,expand=True)
         #self.box_buttons.pack_start(self.box_internal_trigger,expand=False)
         #self.box_buttons.pack_start(self.box_external_trigger,expand=False)
         #self.box_buttons.pack_start(self.box_leaky_readout,expand=False)
-        #self.box_buttons.pack_start(self.box_pulses,expand=False)        
-        #self.box_buttons.pack_start(self.box_DC,expand=False)        
+        #self.box_buttons.pack_start(self.box_pulses,expand=False)
+        #self.box_buttons.pack_start(self.box_DC,expand=False)
         #self.box_buttons.pack_start(self.label_pulses2,expand=False)
-        self.box_buttons.pack_start(self.box_acq_reset_count,expand=False)        
+        self.box_buttons.pack_start(self.box_acq_reset_count,expand=False)
         #self.box_buttons.pack_start(self.label_acq_reset_count2,expand=False)
-        self.box_buttons.pack_start(self.box_acq_reset_hold,expand=False)        
+        self.box_buttons.pack_start(self.box_acq_reset_hold,expand=False)
         #self.box_buttons.pack_start(self.label_acq_reset_hold2,expand=False)
-        
+
         #self.box_buttons.pack_start(self.button_start,expand=False)
         #self.box_buttons.pack_start(self.button_start_no_cktp,expand=False)
         # self.box_buttons.pack_start(self.button_read_reg,expand=False)
-        
+
         #self.box_buttons.pack_start(self.label_But_Space4,expand=True)
         # self.box_buttons.pack_start(self.button_read_config_VMM_reg,expand=False)
         #self.box_buttons.pack_start(self.button_read_XADC,expand=False)
         #self.box_buttons.pack_start(self.label_But_Space5,expand=True)
-        #self.box_buttons.pack_start(self.button_exit,expand=False)                       
+        #self.box_buttons.pack_start(self.button_exit,expand=False)
         #self.box_buttons.pack_start(self.label_But_Space2,expand=True)
         #self.box_buttons.pack_start(self.label_But_Space1,expand=True)
 
-        self.page1_box = gtk.HBox(homogeneous=0,spacing=0)      
+        self.page1_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page1_box.pack_start(self.VMM[0].box_all_channels, expand=False)
-        self.page1_box.pack_end(self.VMM[0].box_variables, expand=True)       
+        self.page1_box.pack_end(self.VMM[0].box_variables, expand=True)
         self.page2_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page2_box.pack_start(self.VMM[1].box_all_channels, expand=False)
-        self.page2_box.pack_end(self.VMM[1].box_variables, expand=True)                     
+        self.page2_box.pack_end(self.VMM[1].box_variables, expand=True)
         self.page3_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page3_box.pack_start(self.VMM[2].box_all_channels, expand=False)
-        self.page3_box.pack_end(self.VMM[2].box_variables, expand=True)  
+        self.page3_box.pack_end(self.VMM[2].box_variables, expand=True)
         self.page4_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page4_box.pack_start(self.VMM[3].box_all_channels, expand=False)
-        self.page4_box.pack_end(self.VMM[3].box_variables, expand=True)  
+        self.page4_box.pack_end(self.VMM[3].box_variables, expand=True)
         self.page5_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page5_box.pack_start(self.VMM[4].box_all_channels, expand=False)
-        self.page5_box.pack_end(self.VMM[4].box_variables, expand=True)   
+        self.page5_box.pack_end(self.VMM[4].box_variables, expand=True)
         self.page6_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page6_box.pack_start(self.VMM[5].box_all_channels, expand=False)
-        self.page6_box.pack_end(self.VMM[5].box_variables, expand=True)  
+        self.page6_box.pack_end(self.VMM[5].box_variables, expand=True)
         self.page7_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page7_box.pack_start(self.VMM[6].box_all_channels, expand=False)
-        self.page7_box.pack_end(self.VMM[6].box_variables, expand=True)  
+        self.page7_box.pack_end(self.VMM[6].box_variables, expand=True)
         self.page8_box = gtk.HBox(homogeneous=0,spacing=0)
         self.page8_box.pack_start(self.VMM[7].box_all_channels, expand=False)
-        self.page8_box.pack_end(self.VMM[7].box_variables, expand=True)  
+        self.page8_box.pack_end(self.VMM[7].box_variables, expand=True)
         #self.page9_box = gtk.HBox(homogeneous=0,spacing=0)
 
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2349,7 +2395,7 @@ class MMFE8:
         self.page8_viewport = gtk.Viewport()
         self.page8_viewport.add(self.page8_box)
         self.page8_scrolledWindow.add(self.page8_viewport)
-        
+
         self.notebook.append_page(self.page1_scrolledWindow, self.tab_label_1)
         self.notebook.append_page(self.page2_scrolledWindow, self.tab_label_2)
         self.notebook.append_page(self.page3_scrolledWindow, self.tab_label_3)
@@ -2365,18 +2411,18 @@ class MMFE8:
         self.page0_viewport = gtk.Viewport()
         self.page0_viewport.add(self.box_buttons)
         self.page0_scrolledWindow.add(self.page0_viewport)
-        
+
         #self.notebook.append_page(self.page9_box, self.tab_label_9)
         self.box_GUI = gtk.HBox(homogeneous=0,spacing=0)
         #self.box_GUI.pack_start(self.myBigButtonsBox, expand=False)
         #self.box_GUI.pack_start(self.box_buttons, expand=False)
         self.box_GUI.pack_start(self.page0_scrolledWindow, expand=False)
-        self.box_GUI.pack_end(self.notebook, expand=True)               
+        self.box_GUI.pack_end(self.notebook, expand=True)
         #self.window.add(self.box_buttons)
         self.window.add(self.box_GUI)
         self.window.show_all()
         self.window.connect("destroy",self.destroy)
-        
+
         #print "Put it out there..."
 
 ############################__INIT__################################
