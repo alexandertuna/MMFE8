@@ -272,31 +272,24 @@ class MMFE8:
                     n=n+2 #paolo
 
 
-    def read_xadc(self, widget):
+    def read_xadc(self, widget, filename = "mmfe8-xadc.dat",
+                  print_mode = False, num_points = 100):
         msg = "x \0 \n"
-        for i in range(100):
+        for i in range(num_points):
             myXADC = self.udp.udp_client(msg,self.UDP_IP,self.UDP_PORT)
-            pd = []
-            pd_ints = []
-            n = 1
-            while n<9:
-                xadcList = myXADC.split()
-                thing1 = int(xadcList[n],16)
-                pd_ints.append(thing1)
-                thing2 = (thing1 * 1.0)/4096.0
-                pd.append(thing2)
-                n = n+1
-            print 'XADC = {0:.4f} {1:.4f} {2:.4f} {3:.4f} {4:.4f} {5:.4f} {6:.4f} {7:.4f}'.format(pd[0],pd[1],pd[2],pd[3],pd[4],pd[5],pd[6],pd[7])
+            pd_ints = [int(x, 16) for x in myXADC.split()]
+            if print_mode:
+                pd = ['{.4f}'.format(x * 1.0 / 4096.0) for x in pd_ints]
+                print 'XADC = ' + " ".join(pd)
             pulses_on = 0
             if self.continuous_pulses:
                 pulses_on = 1
-
             pulse_DAC_value = self.VMM[int(self.notebook.get_current_page())].pulse_DAC_value
-            with open('mmfe8-xadc.dat', 'a') as myfile:
-                for j in range(8):
-                    # Note: Saves XADC in mV so that it can be an int.
+            with open(filename, 'a') as myfile:
+                for j, xADC in enumerate(pd_ints):
+                    # Note: Saves XADC in counts
                     s = "VMM={0:d}, CKTPrunning={1:d}, PDAC={2:d}, XADC={3:d}\n".format((j+1),
-                                    pulses_on, pulse_DAC_value, pd_ints[j])
+                                    pulses_on, pulse_DAC_value, xADC)
                     myfile.write(s)
         return
 
@@ -309,14 +302,7 @@ class MMFE8:
             widget.set_label("OFF")
             self.readout_runlength[24] = 0
             #self.udp.udp_client(MSG,self.UDP_IP,self.UDP_PORT)
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength")
         return
 
     def external_trigger(self, widget):
@@ -328,14 +314,7 @@ class MMFE8:
             widget.set_label("OFF")
             self.readout_runlength[26] = 0
             #self.udp.udp_client(MSG,self.UDP_IP,self.UDP_PORT)
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength")
         return
 
     def leaky_readout(self, widget):
@@ -347,14 +326,7 @@ class MMFE8:
             widget.set_label("OFF")
             self.readout_runlength[25] = 0
             #self.udp.udp_client(MSG,self.UDP_IP,self.UDP_PORT)
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength")
         return
 
 
@@ -379,14 +351,7 @@ class MMFE8:
             ### add new value to register ###
             for i in range(9,-1,-1):
                 self.readout_runlength[9-i] = pulses_list[i]
-            tempInt = 0
-            for bit in range(32):
-                tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-            print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-            message = "w 0x44A100F4"
-            message = message + ' 0x{0:X}'.format(tempInt)
-            message = message + '\0' + '\n'
-            self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+            self._send_configuration("readout_runlength")
             return
 
     def set_acq_reset_count(self,widget,entry):
@@ -438,93 +403,47 @@ class MMFE8:
     #    Control Functions
     ######################################################
 
-    def start(self, widget):
+    def _send_configuration (self,
+                            name = "readout_runlength",
+                            print_config = False,
+                            message_title = ""):
+        """Send Configuration:
+            Sends a configuration word over UDP
+            Syntax send_configuration(list_name, print):
+            list_name: one of 'readout_runlength', "control", or "vmm_cfg_sel"
+            print: Boolean--debug mode printing of the new configuration"""
+        name_addr_lookup = {"readout_runlength" : (self.readout_runlength, 0x44A100F4),
+                            "control" : (self.control, 0x44A100FC),
+                            "vmm_cfg_sel" : (self.vmm_cfg_sel, 0x44A100EC)}
+        lst, addr = name_addr_lookup[name]
         tempInt = 0
-        self.control[2] = 1
-        #byteint = 0
         for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        print message
+            tempInt += int(lst[bit])*pow(2, bit)
+        message = "w 0x{0:X} 0x{1:X}\0\n".format(addr, tempInt)
+        if print_config:
+            print message_title + name + " " + message
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        self.daq_readOut()
+
+    def _flip_flop_control(self, index, print_mode = False,
+                           extra_text = "", extra_action = lambda x : None):
+        self.control[index] = 1
+        self._send_configuration("control", print_mode, extra_text)
+        extra_action ()
         sleep(1)
-        tempInt = 0
-        self.control[2] = 0
-        #byteint = 0
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        print message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        #self.daq_readOut()
-        return
+        self.control[index] = 0
+        self._send_configuration("control", print_mode, extra_text)
+
+    def start(self, widget):
+        self._flip_flop_control(2, True, extra_action = self.daq_readOut)
 
     def reset_global(self, widget):
-        tempInt = 0
-        self.control[0] = 1
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print "VMM Global Reset  " + message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        sleep(1)
-        tempInt = 0
-        self.control[0] = 0
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print "VMM Global Reset  " + message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        return
+        self._flip_flop_control(0, True, "VMM Global Reset ")
 
     def system_init(self, widget):
-        tempInt = 0
-        self.control[1] = 1
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        sleep(1)
-        tempInt = 0
-        self.control[1] = 0
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        return
+        self._flip_flop_control(1, True)
 
     def system_load(self, widget):
-        tempInt = 0
-        self.control[3] = 1
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        sleep(1)
-        tempInt = 0
-        self.control[3] = 0
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt) + '\0' + '\n'
-        print message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
-        return
+        self._flip_flop_control(3, True)
 
 
     ######################################################
@@ -536,23 +455,9 @@ class MMFE8:
         return
 
     def load_IDs(self):
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
-        print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("vmm_cfg_sel", True)
         sleep(1)
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        print "readout_runlength = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength", True)
         return
 
     def set_board_ip(self, widget, textBox):
@@ -593,14 +498,7 @@ class MMFE8:
             ### add new value to register ###
             for i in range(5):
                 self.vmm_cfg_sel[16-i] = display_list[i]
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
-        print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("vmm_cfg_sel", True)
         return
 
     def set_display_no_enet(self, widget): #, textBox
@@ -618,14 +516,7 @@ class MMFE8:
             ### add new value to register ###
             for i in range(5):
                 self.vmm_cfg_sel[16-i] = display_list[i]
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.vmm_cfg_sel[bit])*pow(2, bit)
-        #print "vmm_cfg_sel = " + ' 0x{0:X}'.format(tempInt) #str(hex(tempInt))
-        message = "w 0x44A100EC"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        #self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        #self._send_configuration("vmm_cfg_sel", True)
         return
 
     ######################################################
@@ -1105,6 +996,20 @@ class MMFE8:
         vmm.check_button_SCMX.set_active(False)
         vmm.combo_SM.set_active(2)
         self.readout_runlength[24] = 0
+        # Send the configuration
+        self._send_configuration("readout_runlength")
+        #Whatever I need to do to send VMM configuration
+
+        # Actually read values
+        self.read_xadc(filename = self.CRLoop_Output_dat, num_points = 1000)
+
+        # Restore VMM state
+        vmm.check_button_SBMX.set_active(stored_SBMX)
+        vmm.check_button_SCMX.set_active(stored_SCMX)
+        vmm.combo_SM.set_active(stored_SM_combo)
+        self.readout_runlength[24] = stored_internal_trigger
+        self.send_configuration("readout_runlength")
+        #Restore
 
 
     def run_CRLoop(self, widget):
@@ -1311,22 +1216,10 @@ class MMFE8:
 
         # do single pulse
         self.readout_runlength[24] = 1
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength", True)
         sleep(1)
         self.readout_runlength[24] = 0
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength", True)
 
         # system reset again
         print "**CR-Loop** ...System Reset"
@@ -1338,13 +1231,7 @@ class MMFE8:
 
         # internal trigger
         self.readout_runlength[24] = 1
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength", True)
         sleep(1)
 
         # Start DAQ
@@ -1352,13 +1239,7 @@ class MMFE8:
         self.start_daq_CRLoop()
 
         self.readout_runlength[24] = 0
-        tempInt = 0
-        for bit in range(32):
-            tempInt += int(self.readout_runlength[bit])*pow(2, bit)
-        message = "w 0x44A100F4"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("readout_runlength", True)
 
         print "**CR-Loop** Calibration Point Completed"
         print
@@ -1414,34 +1295,16 @@ class MMFE8:
 
     def start_daq_CRLoop(self):
         # start the DAQ readout
-        tempInt = 0
         self.control[2] = 1
-        #byteint = 0
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        print message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("control", True)
         sleep(1)
 
         print "**CR-Loop** ...Starting DAQ"
         self.daq_readOut_CRLoop()
         print "**CR-Loop** ...DAQ finished"
 
-        tempInt = 0
         self.control[2] = 0
-        #byteint = 0
-        for bit in range(32):
-            tempInt += int(self.control[bit])*pow(2, bit)
-            #byteword = int(byteint)
-        message = "w 0x44A100FC"
-        message = message + ' 0x{0:X}'.format(tempInt)
-        message = message + '\0' + '\n'
-        print message
-        self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
+        self._send_configuration("control", True)
 
     def daq_readOut_CRLoop(self):
         # data word counting for early termination
