@@ -978,7 +978,7 @@ class MMFE8:
         self.VMM[iVMM-1].chan_list[ich-1].button_SM.set_active(False)
         self.VMM[iVMM-1].chan_list[ich-1].button_ST.set_active(False)
 
-    def CR_xADC_readout(self, tpDAC, active_VMM):
+    def CR_xADC_readout(self, tpDAC, active_VMM, keep_configuration = False):
         # set TP DAC
         vmm = self.VMM[active_VMM]
 
@@ -986,10 +986,11 @@ class MMFE8:
         vmm.entry_SDP_.activate()
 
         # Store current vmm state
-        stored_SBMX = vmm.check_button_SBMX.get_active()
-        stored_SCMX = vmm.check_button_SCMX.get_active()
-        stored_SM_combo = vmm.combo_SM.get_active()
-        stored_internal_trigger = self.readout_runlength[24]
+        if keep_configuration:
+            stored_SBMX = vmm.check_button_SBMX.get_active()
+            stored_SCMX = vmm.check_button_SCMX.get_active()
+            stored_SM_combo = vmm.combo_SM.get_active()
+            stored_internal_trigger = self.readout_runlength[24]
 
         # Set xADC readout vmm state
         vmm.check_button_SBMX.set_active(True)
@@ -998,18 +999,29 @@ class MMFE8:
         self.readout_runlength[24] = 0
         # Send the configuration
         self._send_configuration("readout_runlength")
-        #Whatever I need to do to send VMM configuration
+        # write rest of configuration
+        self.button_write.clicked()
+        self.button_resetVMM.clicked()
+        self.button_SystemInit.clicked()
+        self.button_SystemLoad.clicked()
+        self.button_SystemInit.clicked()
 
         # Actually read values
         self.read_xadc(filename = self.CRLoop_Output_dat, num_points = 1000)
 
         # Restore VMM state
-        vmm.check_button_SBMX.set_active(stored_SBMX)
-        vmm.check_button_SCMX.set_active(stored_SCMX)
-        vmm.combo_SM.set_active(stored_SM_combo)
-        self.readout_runlength[24] = stored_internal_trigger
-        self.send_configuration("readout_runlength")
-        #Restore
+        if keep_configuration:
+            vmm.check_button_SBMX.set_active(stored_SBMX)
+            vmm.check_button_SCMX.set_active(stored_SCMX)
+            vmm.combo_SM.set_active(stored_SM_combo)
+            self.readout_runlength[24] = stored_internal_trigger
+            self.send_configuration("readout_runlength")
+            # write configuration
+            self.button_write.clicked()
+            self.button_resetVMM.clicked()
+            self.button_SystemInit.clicked()
+            self.button_SystemLoad.clicked()
+            self.button_SystemInit.clicked()
 
 
     def run_CRLoop(self, widget):
