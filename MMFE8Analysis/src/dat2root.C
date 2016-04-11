@@ -51,6 +51,7 @@ int main(int argc, char* argv[]) {
   sVAR.push_back("PDO");
   sVAR.push_back("TDO");
   sVAR.push_back("BCID");
+  sVAR.push_back("BCIDgray");
   sVAR.push_back("TPDAC");
   sVAR.push_back("THDAC");
   sVAR.push_back("Delay");
