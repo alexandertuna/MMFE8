@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   cout << "Input File:  " << inputFileName << endl;
   cout << "Output File: " << outputFileName << endl;
 
-  vector<string> sVAR;
+  vector<string> sVARv;
   sVAR.push_back("VMM");
   sVAR.push_back("CHword");
   sVAR.push_back("CHpulse");
@@ -58,42 +58,73 @@ int main(int argc, char* argv[]) {
   sVAR.push_back("TACslope");
   sVAR.push_back("PeakTime");
 
-  int Nvar = sVAR.size();
-  vector<int> vVAR;
-  for(int i = 0; i < Nvar; i++)
-    vVAR.push_back(0);
+  vector<string> sVARx;
+  sVARx.push_back("VMM");
+  sVARx.push_back("CKTPrunning");
+  sVARx.push_back("PDAC");
+  sVARx.push_back("XADC");
+
+  int Nvarv = sVARv.size();
+  vector<int> vVARv (Nvarv, 0);
+  int Nvarx = sVARx.size();
+  vector<int> vVARx (Nvarx, 0);
 
   string line;
   ifstream ifile(inputFileName);
 
   TFile* ofile = new TFile(outputFileName,"RECREATE");
   ofile->cd();
-  TTree* tree = new TTree("MMFE8","MMFE8");
+  TTree* vtree = new TTree("VMM_data","VMM_data");
+  TTree* xtree = new TTree("xADC_data","xADC_data");
 
-  for(int i = 0; i < Nvar; i++){
-    tree->Branch(sVAR[i].c_str(), &vVAR[i]);
+  for(int i = 0; i < Nvarv; i++){
+    vtree->Branch(sVARv[i].c_str(), &vVARv[i]);
+  }
+  for (int i = 0; i < Nvarx; i++){
+    xtree->Branch(sVARx[i].c_str(), &vVARx[i]);
   }
 
+  // Loop through the entire input file
   if(ifile.is_open()){
     while(getline(ifile,line)){
+      // Flags for which kind of line it is
+      int num_xadc_matches = 0;
+      int num_vmm_matches = 0;
+      // Read into buffer
       char sline[1000];
       sprintf(sline,"%s",line.c_str());
+      // Break up line by spaces
       char* p = strtok(sline, " ");
       while(p){
-      	for(int v = 0; v < Nvar; v++){
-      	  if(strncmp(sVAR[v].c_str(),p,sVAR[v].length())==0){
-      	    sscanf(p,(sVAR[v]+"=%d").c_str(), &vVAR[v]);
-      	    break;
-      	  }
-      	}
+        if (num_xadc_matches < 3) {
+          for(int v = 0; v < Nvarv; v++){
+        	  if(strncmp(sVARv[v].c_str(),p,sVARv[v].length())==0){
+        	    sscanf(p,(sVARv[v]+"=%d").c_str(), &vVARv[v]);
+              num_vmm_matches++;
+        	    break;
+        	  }
+        	} // End if !is_xadc_data
+        } else if (num_vmm_matches < 3) {
+          for (int i = 0; i < Nvarx; i++) {
+            if(strncmp(sVARx[i].c_str(),p,sVARx[i].length())==0){
+        	    sscanf(p,(sVARx[i]+"=%d").c_str(), &vVARx[i]);
+              num_xadc_matches++;
+        	    break;
+        	  }
+          }
+        } // End if !is_vmm_data
       	p = strtok(NULL, " ");
-      }
-      tree->Fill();
+      } // End of line read
+      if (num_vmm_matches == Nvarv)
+        vtree->Fill();
+      else if (num_xadc_matches == Nvarx)
+        xtree->Fill();
     }
   }
 
   ofile->cd();
-  tree->Write();
+  vtree->Write();
+  xtree->Write();
   ofile->Close();
 
   return 0;
