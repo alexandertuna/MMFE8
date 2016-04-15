@@ -28,6 +28,7 @@ public :
    Int_t           PDO;
    Int_t           TDO;
    Int_t           BCID;
+   Int_t           BCIDgray;
    Int_t           TPDAC;
    Int_t           THDAC;
    Int_t           Delay;
@@ -41,6 +42,7 @@ public :
    TBranch        *b_PDO;   //!
    TBranch        *b_TDO;   //!
    TBranch        *b_BCID;   //!
+   TBranch        *b_BCIDgray;   //!
    TBranch        *b_TPDAC;   //!
    TBranch        *b_THDAC;   //!
    TBranch        *b_Delay;   //!
@@ -59,7 +61,7 @@ public :
 
 #endif
 
-inline MMFE8Base::MMFE8Base(TTree *tree) : fChain(0) 
+inline MMFE8Base::MMFE8Base(TTree *tree) : fChain(0)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -121,6 +123,7 @@ inline void MMFE8Base::Init(TTree *tree)
    fChain->SetBranchAddress("PDO", &PDO, &b_PDO);
    fChain->SetBranchAddress("TDO", &TDO, &b_TDO);
    fChain->SetBranchAddress("BCID", &BCID, &b_BCID);
+   fChain->SetBranchAddress("BCIDgray", &BCIDgray, &b_BCIDgray);
    fChain->SetBranchAddress("TPDAC", &TPDAC, &b_TPDAC);
    fChain->SetBranchAddress("THDAC", &THDAC, &b_THDAC);
    fChain->SetBranchAddress("Delay", &Delay, &b_Delay);
