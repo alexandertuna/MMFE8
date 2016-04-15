@@ -272,18 +272,16 @@ class MMFE8:
                     n=n+2 #paolo
 
 
-    def read_xadc(self, widget, filename = "mmfe8-xadc.dat",
+    def read_xadc(self, widget=None, filename = "mmfe8-xadc.dat",
                   print_mode = False, num_points = 100):
         msg = "x \0 \n"
         for i in range(num_points):
             myXADC = self.udp.udp_client(msg,self.UDP_IP,self.UDP_PORT)
-            pd_ints = [int(x, 16) for x in myXADC.split()]
+            pd_ints = [int(x, 16) for x in (myXADC.split())[1:]]
             if print_mode:
                 pd = ['{.4f}'.format(x * 1.0 / 4096.0) for x in pd_ints]
                 print 'XADC = ' + " ".join(pd)
-            pulses_on = 0
-            if self.continuous_pulses:
-                pulses_on = 1
+            pulses_on = self.readout_runlength[24]
             pulse_DAC_value = self.VMM[int(self.notebook.get_current_page())].pulse_DAC_value
             with open(filename, 'a') as myfile:
                 for j, xADC in enumerate(pd_ints):
@@ -425,16 +423,15 @@ class MMFE8:
         self.udp.udp_client(message,self.UDP_IP,self.UDP_PORT)
 
     def _flip_flop_control(self, index, print_mode = False,
-                           extra_text = "", extra_action = lambda x : None):
+                           extra_text = ""):
         self.control[index] = 1
         self._send_configuration("control", print_mode, extra_text)
-        extra_action ()
         sleep(1)
         self.control[index] = 0
         self._send_configuration("control", print_mode, extra_text)
 
     def start(self, widget):
-        self._flip_flop_control(2, True, extra_action = self.daq_readOut)
+        self._flip_flop_control(2, True)
 
     def reset_global(self, widget):
         self._flip_flop_control(0, True, "VMM Global Reset ")
@@ -1052,6 +1049,12 @@ class MMFE8:
 
         # loop over different parameter settings
         for tpDAC in Loop_tpDAC:
+            # If set to read out test pulse DAC on xADC, do so each time.
+            if self.button_tpDAC_xADC.get_active() and self.frame_tpDAC.button_Loop.get_active():
+                print "xADC RUNNING!!!!!!!!"
+                self.CR_xADC_readout(tpDAC, int(self.notebook.get_current_page()))
+            else:
+                print "xADC not running."
             for thDAC in Loop_thDAC:
                 for delay in Loop_delay:
                     for TAC in Loop_TACslope:
@@ -1111,9 +1114,6 @@ class MMFE8:
 
                                     # run configure and run DAQ for this configuration
                                     self.run_CRLoop_point()
-            # If set to read out test pulse DAC on xADC, do so each time.
-            if self.button_tpDAC_xADC.get_active() and self.button_tpDAC_xADC.get_sensitive():
-                self.CR_xADC_readout(tpDAC, int(self.notebook.get_current_page()))
 
         # create .root file from .dat file (requires dat2root in path)
         cmd = "dat2root %s -o %s" % (self.CRLoop_Output_dat,self.CRLoop_Output_root)
