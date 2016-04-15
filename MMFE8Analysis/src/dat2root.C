@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
       char* p = strtok(sline, " ");
       while(p){
       	for(int v = 0; v < Nvar; v++){
-      	  if(strncmp(sVAR[v].c_str(),p,sVAR[v].length())==0){
+      	  if(strncmp((sVAR[v]+"=").c_str(),p,sVAR[v].length()+1)==0){
       	    sscanf(p,(sVAR[v]+"=%d").c_str(), &vVAR[v]);
       	    break;
       	  }
