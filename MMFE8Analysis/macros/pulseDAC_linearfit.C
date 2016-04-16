@@ -19,7 +19,7 @@ using namespace std;
 
 void pulseDAC_linearfit(){
 
-  string filename = "../xADC_testdata.root";
+  string filename = "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.dat.root";
   string yvar = "xADC voltage (V)";
   string xvar = "pulse DAC value (counts)";
 
@@ -33,12 +33,12 @@ void pulseDAC_linearfit(){
   int marker_color = kGreen + 1;
 
   string outputfile = "./xADC_test1";
-  string title = "VMM #" + to_string(vmm) + " pulse DAC linearity";
+  /*string title = "VMM #" + to_string(vmm) + " pulse DAC linearity";*/
 
 
   ///////////////////////////////////////////////////////
 
-  TChain* tree = new TChain("MMFE8","MMFE8");
+  TChain* tree = new TChain("VMM_data","VMM_data");
 
   tree->AddFile(filename.c_str());
 

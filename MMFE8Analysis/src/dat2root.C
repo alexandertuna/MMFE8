@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
       while(p){
         if (num_xadc_matches < 3) {
           for(int v = 0; v < Nvarv; v++){
-        	  if(strncmp(sVARv[v].c_str(),p,sVARv[v].length()+1)==0){
+        	  if(strncmp(sVARv[v].c_str(),p,sVARv[v].length())==0){
         	    sscanf(p,(sVARv[v]+"=%d").c_str(), &vVARv[v]);
               num_vmm_matches++;
         	    break;
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
         	} // End if !is_xadc_data
         } else if (num_vmm_matches < 3) {
           for (int i = 0; i < Nvarx; i++) {
-            if(strncmp(sVARx[i].c_str(),p,sVARx[i].length()+1)==0){
+            if(strncmp(sVARx[i].c_str(),p,sVARx[i].length())==0){
         	    sscanf(p,(sVARx[i]+"=%d").c_str(), &vVARx[i]);
               num_xadc_matches++;
         	    break;
@@ -115,9 +115,9 @@ int main(int argc, char* argv[]) {
         } // End if !is_vmm_data
       	p = strtok(NULL, " ");
       } // End of line read
-      if (num_vmm_matches == Nvarv)
+      if (num_vmm_matches > num_xadc_matches)
         vtree->Fill();
-      else if (num_xadc_matches == Nvarx)
+      else //if (num_xadc_matches > Nvarx)
         xtree->Fill();
     }
   }
