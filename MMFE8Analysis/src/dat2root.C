@@ -115,10 +115,12 @@ int main(int argc, char* argv[]) {
         } // End if !is_vmm_data
       	p = strtok(NULL, " ");
       } // End of line read
-      if (num_vmm_matches > num_xadc_matches)
+      if (num_vmm_matches > 1)
         vtree->Fill();
+        printf("%s -> VMM", sline.c_str());
       else //if (num_xadc_matches > Nvarx)
         xtree->Fill();
+        printf("%s -> xADC", sline.c_str());
     }
   }
 
