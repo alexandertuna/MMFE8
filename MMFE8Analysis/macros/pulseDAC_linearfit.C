@@ -25,9 +25,9 @@ void pulseDAC_linearfit(){
 
   int vmm = 1;
   int degrees_of_freedom=3;
-  int max_PDAC = 300;
+  const int min_PDAC = 0;
+  const int max_PDAC = 300;
   int linear_region_start = 80;
-  int min_PDAC = 0;
   int min_N_per_bin = 10;
   int fit_color = kAzure;
   int marker_color = kGreen + 1;
@@ -38,7 +38,7 @@ void pulseDAC_linearfit(){
 
   ///////////////////////////////////////////////////////
 
-  TChain* tree = new TChain("VMM_data","VMM_data");
+  TChain* tree = new TChain("xADC_data");
 
   tree->AddFile(filename.c_str());
 
@@ -46,13 +46,12 @@ void pulseDAC_linearfit(){
 
   int N = tree->GetEntries();
 
-  int num_pdacs = max_PDAC - min_PDAC + 1;
+  const int num_pdacs = max_PDAC - min_PDAC + 1;
 
   TH1D* hists[num_pdacs];
 
-  int current_PDAC;
   for (int i = 0; i < num_pdacs; i++) {
-    current_PDAC = i + min_PDAC;
+    int current_PDAC = i + min_PDAC;
     hists[i] = new TH1D(("PDAC value " + to_string(current_PDAC)).c_str(),
                         title.c_str(), 4096, -0.00013, 1.00013);
   }

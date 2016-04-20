@@ -103,24 +103,25 @@ int main(int argc, char* argv[]) {
               num_vmm_matches++;
         	    break;
         	  }
-        	} // End if !is_xadc_data
-        } else if (num_vmm_matches < 3) {
-          for (int i = 0; i < Nvarx; i++) {
-            if(strncmp(sVARx[i].c_str(),p,sVARx[i].length())==0){
-        	    sscanf(p,(sVARx[i]+"=%d").c_str(), &vVARx[i]);
+        	} // End vmm part
+        } if (num_vmm_matches < 3) {
+          for (int v = 0; v < Nvarx; v++) {
+            if(strncmp(sVARx[v].c_str(),p,sVARx[v].length())==0){
+        	    sscanf(p,(sVARx[v]+"=%d").c_str(), &vVARx[v]);
               num_xadc_matches++;
         	    break;
         	  }
           }
-        } // End if !is_vmm_data
+        } // End xadc part
       	p = strtok(NULL, " ");
       } // End of line read
-      if (num_vmm_matches > 1)
+      if (num_vmm_matches > 1){
         vtree->Fill();
-        printf("%s -> VMM", sline.c_str());
-      else //if (num_xadc_matches > Nvarx)
+        //printf("%s -> VMM\n", line.c_str());
+      } else {//if (num_xadc_matches > Nvarx)
         xtree->Fill();
-        printf("%s -> xADC", sline.c_str());
+        //printf("%s -> xADC\n", line.c_str());
+      }
     }
   }
 
