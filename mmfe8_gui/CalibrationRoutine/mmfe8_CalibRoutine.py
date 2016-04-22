@@ -986,7 +986,7 @@ class MMFE8:
 
         # No idea what this actually does, but I hope it works:
         for i in range(1,9):
-            self.readout_runlength[15+i] = 0
+            self.readout_runlength[15+i] = 1
             self.vmm_cfg_sel[i-1] = 0
         self.load_IDs()
 
@@ -1001,7 +1001,7 @@ class MMFE8:
         # Set xADC readout vmm state
         vmm.check_button_SBMX.set_active(True)
         vmm.check_button_SCMX.set_active(False)
-        vmm.combo_SM.set_active(2)
+        vmm.combo_SM.set_active(1)
         self.readout_runlength[24] = 0
         # Send the configuration
         #self._send_configuration("readout_runlength")
