@@ -986,8 +986,8 @@ class MMFE8:
 
         # No idea what this actually does, but I hope it works:
         for i in range(1,9):
-            self.readout_runlength[15+i] = 1
-            self.vmm_cfg_sel[i-1] = 1
+            self.readout_runlength[15+i] = 0
+            self.vmm_cfg_sel[i-1] = 0
         self.load_IDs()
 
 
