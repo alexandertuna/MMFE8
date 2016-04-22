@@ -978,9 +978,18 @@ class MMFE8:
     def CR_xADC_readout(self, tpDAC, active_VMM, keep_configuration = False):
         # set TP DAC
         vmm = self.VMM[active_VMM]
+        self.Cur_VMM = [active_VMM + 1]
 
         vmm.entry_SDP_.set_text(str(tpDAC))
         vmm.entry_SDP_.activate()
+        # print "SDP entry: " + vmm.entry_SDP_.get_text()
+
+        # No idea what this actually does, but I hope it works:
+        for i in range(1,9):
+            self.readout_runlength[15+i] = 1
+            self.vmm_cfg_sel[i-1] = 1
+        self.load_IDs()
+
 
         # Store current vmm state
         if keep_configuration:
@@ -995,13 +1004,16 @@ class MMFE8:
         vmm.combo_SM.set_active(2)
         self.readout_runlength[24] = 0
         # Send the configuration
-        self._send_configuration("readout_runlength")
+        #self._send_configuration("readout_runlength")
         # write rest of configuration
-        self.button_write.clicked()
+        #self.button_write.clicked()
+        # Copied a lot of what the CRLoop point code does:
+        self.write_VMM_CRLoop()
         self.button_resetVMM.clicked()
         self.button_SystemInit.clicked()
         self.button_SystemLoad.clicked()
         self.button_SystemInit.clicked()
+        self.button_SystemLoad.clicked()
 
         # Actually read values
         self.read_xadc(filename = self.CRLoop_Output_dat, num_points = 1000)
@@ -1051,10 +1063,8 @@ class MMFE8:
         for tpDAC in Loop_tpDAC:
             # If set to read out test pulse DAC on xADC, do so each time.
             if self.button_tpDAC_xADC.get_active() and self.frame_tpDAC.button_Loop.get_active():
-                print "xADC RUNNING!!!!!!!!"
+                print "\n\n******** xADC Routine **********\n\n"
                 self.CR_xADC_readout(tpDAC, int(self.notebook.get_current_page()))
-            else:
-                print "xADC not running."
             for thDAC in Loop_thDAC:
                 for delay in Loop_delay:
                     for TAC in Loop_TACslope:
