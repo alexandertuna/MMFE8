@@ -28,9 +28,9 @@ using namespace std;
 
 const string input_filename = \
   "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.dat.root";
-const int vmm = 1;
+const int vmm = 3;
 const int channel = 15;
-const int min_PDAC = 100;
+const int min_PDAC = 60;
 const int max_PDAC = 300;
 const int min_events_per_bin = 10;
 
@@ -79,7 +79,9 @@ void PDO_linearity (void) {
     if ((vmm == xbase->VMM) && (current_PDAC >= min_PDAC) && (current_PDAC <= max_PDAC)) {
       double charge = float(xbase->XADC) * fC_per_xADC_count;
       xhists[current_PDAC - min_PDAC]->Fill(charge);
-      //printf("PDAC: %d, charge: %f\n", current_PDAC, charge);
+      //printf("PDAC: %d, charge: %.02f, unconverted: %d\n", current_PDAC, charge, xbase->XADC);
+    } else {
+      printf("Rejected: VMM %d, PDAC %d, unconverted %d\n", xbase->VMM, current_PDAC, xbase->XADC);
     }
   }
   for (int i = 0; i < Nvmm; i++){
@@ -99,10 +101,12 @@ void PDO_linearity (void) {
   double XADC_stddevs[num_pdacs];
   double PDO_means[num_pdacs];
   double PDO_stddevs[num_pdacs];
+  double PDAC_values[num_pdacs];
   int num_points = 0;
 
   for (int i = 0; i < num_pdacs; i++){
     if ((vhists[i]->GetEntries() >= min_events_per_bin) && (xhists[i]->GetEntries() >= min_events_per_bin)){
+      PDAC_values[num_points] = float(i + min_PDAC);
       XADC_means[num_points] = xhists[i]->GetMean();
       XADC_stddevs[num_points] = xhists[i]->GetStdDev();
       PDO_means[num_points] = vhists[i]->GetMean();
@@ -111,8 +115,9 @@ void PDO_linearity (void) {
     }
   }
 
-  TGraphErrors* graph = new TGraphErrors(num_points, XADC_means, PDO_means, XADC_stddevs, PDO_stddevs);
-
+  //TGraphErrors* graph = new TGraphErrors(num_points, XADC_means, PDO_means, XADC_stddevs, PDO_stddevs);
+  //TGraphErrors* graph = new TGraphErrors(num_points, PDAC_values, PDO_means, 0, PDO_stddevs);
+  TGraphErrors* graph = new TGraphErrors(num_points, PDAC_values, XADC_means, 0, XADC_stddevs);
   TCanvas* can = new TCanvas("can","can",600,500);
   can->SetTopMargin(0.1);
   graph->SetTitle(plot_title.c_str());
@@ -131,6 +136,6 @@ void PDO_linearity (void) {
   graph->GetYaxis()->SetTitleOffset(1.4);
   graph->GetYaxis()->CenterTitle();
   graph->GetXaxis()->SetRangeUser(0., 300.);
-  graph->GetYaxis()->SetRangeUser(0.,900.);
+  graph->GetYaxis()->SetRangeUser(0.,1100.);
   graph->Draw("ap");
 }
