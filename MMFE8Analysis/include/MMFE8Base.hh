@@ -34,6 +34,7 @@ public :
    Int_t           Delay;
    Int_t           TACslope;
    Int_t           PeakTime;
+   Int_t           PulseNum;
 
    // List of branches
    TBranch        *b_VMM;   //!
@@ -48,6 +49,7 @@ public :
    TBranch        *b_Delay;   //!
    TBranch        *b_TACslope;   //!
    TBranch        *b_PeakTime;   //!
+   TBranch        *b_PulseNum;   //!
 
    MMFE8Base(TTree *tree=0);
    virtual ~MMFE8Base();
@@ -129,6 +131,7 @@ inline void MMFE8Base::Init(TTree *tree)
    fChain->SetBranchAddress("Delay", &Delay, &b_Delay);
    fChain->SetBranchAddress("TACslope", &TACslope, &b_TACslope);
    fChain->SetBranchAddress("PeakTime", &PeakTime, &b_PeakTime);
+   fChain->SetBranchAddress("PulseNum", &PulseNum, &b_PulseNum);
    Notify();
 }
 
