@@ -57,6 +57,7 @@ int main(int argc, char* argv[]) {
   sVARv.push_back("Delay");
   sVARv.push_back("TACslope");
   sVARv.push_back("PeakTime");
+  sVARv.push_back("PulseNum");
 
   vector<string> sVARx;
   sVARx.push_back("VMM");
@@ -98,7 +99,7 @@ int main(int argc, char* argv[]) {
       while(p){
         if (num_xadc_matches < 3) {
           for(int v = 0; v < Nvarv; v++){
-        	  if(strncmp(sVARv[v].c_str(),p,sVARv[v].length())==0){
+	    if(strncmp((sVARv[v]+"=").c_str(),p,sVARv[v].length()+1)==0){
         	    sscanf(p,(sVARv[v]+"=%d").c_str(), &vVARv[v]);
               num_vmm_matches++;
         	    break;
