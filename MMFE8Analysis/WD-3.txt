@@ -1,0 +1,50 @@
+VMM 2, 5 pulses to CH 1, all other CH masked
+
+0x4e07003 0xb223898b, addr=1, amp=112, time=56, BCid= 3826, VMM= 1
+2989074209
+0x481a003 0xb229a721, addr=1, amp=416, time=32, BCid= 1473, VMM= 1
+2989475617
+0x481a003 0xb22fc721, addr=1, amp=416, time=32, BCid= 1473, VMM= 1
+2989872928
+0x495a003 0xb235d720, addr=1, amp=416, time=37, BCid= 1472, VMM= 1
+2990274336
+0x48da003 0xb23bf720, addr=1, amp=416, time=35, BCid= 1472, VMM= 1
+
+VMM 2, 5 pulses to CH 1, all other CH unmasked
+
+0x45050df 0xb0003020, addr=56, amp=80, time=20, BCid= 63, VMM= 1
+2952802325
+0x4803947 0xb0003015, addr=18, amp=57, time=32, BCid= 25, VMM= 1
+2952802345
+0x4686047 0xb0003029, addr=18, amp=96, time=26, BCid= 49, VMM= 1
+2952802429
+0x46450df 0xb000307d, addr=56, amp=80, time=25, BCid= 86, VMM= 1
+2952802421
+0x4743747 0xb0003075, addr=18, amp=55, time=29, BCid= 89, VMM= 1
+
+VMM 2, 5 pulses to CH 2, all other CH unmasked
+
+0x45850df 0xb00031f3, addr=56, amp=80, time=22, BCid= 349, VMM= 1
+2952802480
+0x4582b27 0xb00030b0, addr=10, amp=43, time=22, BCid= 223, VMM= 1
+2952802801
+0x4583737 0xb00031f1, addr=14, amp=55, time=22, BCid= 350, VMM= 1
+2952802618
+0x4803847 0xb000313a, addr=18, amp=56, time=32, BCid= 467, VMM= 1
+2952802753
+0x4e050df 0xb00031c1, addr=56, amp=80, time=56, BCid= 382, VMM= 1
+
+VMM 2, 5 pulses to CH 2, all other CH masked
+
+0x4e07007 0xb0d7f7ab, addr=2, amp=112, time=56, BCid= 1330, VMM= 1
+2967344931
+0x4a1ab07 0xb0de1723, addr=2, amp=427, time=40, BCid= 1474, VMM= 1
+2967742243
+0x48dae07 0xb0e42723, addr=2, amp=430, time=35, BCid= 1474, VMM= 1
+2968143651
+0x485b007 0xb0ea4723, addr=2, amp=432, time=33, BCid= 1474, VMM= 1
+2968545057
+0x4a1b007 0xb0f06721, addr=2, amp=432, time=40, BCid= 1473, VMM= 1
+
+
+
