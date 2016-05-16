@@ -30,8 +30,8 @@ const string input_filename = \
   "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.dat.root";
 const int vmm = 1;
 const int channel = 1;
-const int min_PDAC = 60;
-const int max_PDAC = 300;
+const int min_PDAC = 70;
+const int max_PDAC = 150;
 const int min_events_per_bin = 10;
 
 
@@ -44,8 +44,9 @@ const double fC_per_xADC_count = 1.2 / 4.096;
 /* Names */
 const string vtree_name = "VMM_data";
 const string xtree_name = "xADC_data";
-const string x_axis_label = "Input charge (fC)";
-const string y_axis_label = "PDO output (counts)";
+const string charge_label = "Input charge (fC)";
+const string PDO_label = "PDO output (counts)";
+const string PDAC_label = "pulser DAC (counts)";
 const string plot_title = "PDO calibration";
 
 void PDO_linearity (void) {
@@ -118,7 +119,7 @@ void PDO_linearity (void) {
   TGraphErrors* graph = new TGraphErrors(num_points, XADC_means, PDO_means, XADC_stddevs, PDO_stddevs);
   //TGraphErrors* graph = new TGraphErrors(num_points, PDAC_values, PDO_means, 0, PDO_stddevs);
   //TGraphErrors* graph = new TGraphErrors(num_points, PDAC_values, XADC_means, 0, XADC_stddevs);
-  TCanvas* can = new TCanvas("can","can",600,500);
+  TCanvas* can = new TCanvas("can","can",1200,1000);
   can->SetTopMargin(0.1);
   graph->SetTitle(plot_title.c_str());
   can->SetLeftMargin(0.12);
@@ -129,13 +130,13 @@ void PDO_linearity (void) {
   can->SetGridy();
   can->cd();
 
-  graph->GetXaxis()->SetTitle(x_axis_label.c_str());
+  graph->GetXaxis()->SetTitle(charge_label.c_str());
   graph->GetXaxis()->CenterTitle();
   graph->GetXaxis()->SetTitleOffset(1.1);
-  graph->GetYaxis()->SetTitle(y_axis_label.c_str());
+  graph->GetYaxis()->SetTitle(PDO_label.c_str());
   graph->GetYaxis()->SetTitleOffset(1.4);
   graph->GetYaxis()->CenterTitle();
-  graph->GetXaxis()->SetRangeUser(0., 300.);
-  graph->GetYaxis()->SetRangeUser(0.,1100.);
+  graph->GetXaxis()->SetRangeUser(0., 110.);
+  graph->GetYaxis()->SetRangeUser(0.,850.);
   graph->Draw("ap");
 }
