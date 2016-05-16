@@ -1203,8 +1203,12 @@ class MMFE8:
             return
         self.button_RunADC.set_sensitive(False)
 
+        # delete existing .dat file for new writing
+        cmd = "rm -f %s" % self.CRLoop_Output_dat
+        os.system(cmd)
+
         [tpDAC_min, tpDAC_max, tpDAC_step] = [int(obj.get_text()) for obj in [self.text_xADC_minTP, self.text_xADC_maxTP,self.text_xADC_stepTP]]
-        for tpDAC in range(tpDAC_min, tp_DAC_max + 1, tpDAC_step):
+        for tpDAC in range(tpDAC_min, tpDAC_max + 1, tpDAC_step):
             self.CR_xADC_readout(tpDAC, int(self.notebook.get_current_page()))
 
         cmd = "dat2root %s -o %s" % (self.CRLoop_Output_dat,self.CRLoop_Output_root)
