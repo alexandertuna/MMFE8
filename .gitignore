@@ -9,6 +9,7 @@ xdat2root
 .#*
 *.so
 *.dSYM
+*.dat
 *_.cxx
 *.root
 *.o
