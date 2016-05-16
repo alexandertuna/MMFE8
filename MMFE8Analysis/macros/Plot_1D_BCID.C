@@ -21,10 +21,13 @@ using namespace std;
 
 void Plot_1D_BCID(){
 
-  string filename = "data/BCID_02May16/BCID_test_0.root";
+  //string filename = "data/BCID_02May16/BCID_test_1.root";
+  string filename = "test.root";
   
-  int iVMM = 8;
-  int iCH  = 23;
+  int iVMM = 7;
+  int iCH  = 15;
+
+  int idelay = 0;
 
   ///////////////////////////////////////////////////////
 
@@ -33,7 +36,7 @@ void Plot_1D_BCID(){
   tree->AddFile(filename.c_str());
 
   MMFE8Base* base = new MMFE8Base(tree);
-  base->PulseNum = 0;
+  //base->PulseNum = 0;
 
   int N = tree->GetEntries();
 
@@ -41,9 +44,11 @@ void Plot_1D_BCID(){
   TH2D* hist2D = new TH2D("hist2D","hist2D", 100, 0., 100., 9, -4.5, 4.5);
 
   TH1D* hist_BCID[100];
+  char *hname = new char[50];
   for(int i = 0; i < 100; i++){
-    hist_BCID[i] = (TH1D*) new TH1D(("hist"+to_string(i)).c_str(),
-				    ("hist"+to_string(i)).c_str(), 
+    sprintf(hname,"hist_%d",i);
+    hist_BCID[i] = (TH1D*) new TH1D(hname,
+				    hname, 
 				    5000, -0.5, 4999.5);
   }
 
@@ -51,6 +56,8 @@ void Plot_1D_BCID(){
   double N_BCID[100];
 
   vector<int> iBCID[100];
+  vector<int> iCHw[100];
+  vector<int> iPDO[100];
 
   for(int i = 0; i < 100; i++){
     BCID[i] = 0.;
@@ -60,17 +67,29 @@ void Plot_1D_BCID(){
   for (int i = 0; i < N; i++){
     base->GetEntry(i);
 
+    // if(base->Delay != idelay)
+    //   continue;
+
     if(base->VMM != iVMM)
       continue;
 
-    if(base->CHpulse != iCH)
-      continue;
+    // if(base->CHpulse != iCH)
+    //   continue;
 
-    if(base->CHword != iCH || true){
-      if(base->BCID > 0){
-	BCID[base->PulseNum] += base->BCID;
+    //if(base->CHword > iCH && base->CHword-10 <= iCH){
+      if(base->CHword != iCH || true){
+      if(base->BCID >= 0){
+	//BCID[base->PulseNum] += base->BCID;
+	if(BCID[base->PulseNum] >= 0){
+	  if(base->BCID < BCID[base->PulseNum])
+	    BCID[base->PulseNum] = base->BCID;
+	} else{
+	  BCID[base->PulseNum] = base->BCID;
+	}
 	N_BCID[base->PulseNum] += 1.;
 	iBCID[base->PulseNum].push_back(base->BCID);
+	iCHw[base->PulseNum].push_back(base->CHword);
+	iPDO[base->PulseNum].push_back(base->PDO);
 	hist_BCID[base->PulseNum]->Fill(base->BCID);
       }
     }
@@ -78,16 +97,19 @@ void Plot_1D_BCID(){
 
   for(int i = 0; i < 100; i++){
     cout << N_BCID[i] << " entries for pulse " << i << endl;
-    BCID[i] = int(BCID[i]/N_BCID[i] + 0.5);
+    //BCID[i] = int(BCID[i]/N_BCID[i] + 0.5);
     BCID[i] = hist_BCID[i]->GetMaximumBin()-1;
     for(int j = 0; j < iBCID[i].size(); j++)
-      cout << iBCID[i][j] << " ";
+      cout << iBCID[i][j] << "(" << iCHw[i][j] << ")" << "(" << iPDO[i][j] << ") ";
     cout << endl << BCID[i] << endl;
     cout << endl;
   }
 
   for (int i = 0; i < N; i++){
     base->GetEntry(i);
+
+    if(base->Delay != idelay)
+      continue;
 
     if(base->VMM != iVMM)
       continue;
