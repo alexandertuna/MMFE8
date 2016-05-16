@@ -1,6 +1,7 @@
 dat2root
 xdat2root
 *.DS_Store
+.DS_Store
 *~
 *.pyc
 *#

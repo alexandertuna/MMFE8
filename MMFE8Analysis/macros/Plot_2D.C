@@ -30,16 +30,19 @@ void Plot_2D(string filename){
   
   //string filename = "data/scan_CH1-50_masked.root";
  
-  string varXname = "VMM # [1-8]";
-  string varYname = "CH # [1-64]";
+  // string varXname = "VMM # [1-8]";
+  // string varYname = "CH # [1-64]";
 
-  // string varXname = "Pulsed CH # [1-64]";
-  // string varYname = "Recorded CH # [1-64]";
-  //string varZname = "# Recorded Pulses [/100 pulsed]";
-  string varZname = "#sigma(PDO) / #bar{PDO}";
+  string varXname = "Pulsed CH # [1-64]";
+  string varYname = "Recorded CH # [1-64]";
+  string varZname = "# Recorded Pulses [/100 pulsed]";
+  //string varZname = "#sigma(PDO) / #bar{PDO}";
   int Nx = 8;
   double Xmin = 0.5;
   double Xmax = 8.5;
+  // int Nx = 64;
+  // double Xmin = 0.5;
+  // double Xmax = 64.5;
   int Ny = 64;
   double Ymin = 0.5;
   double Ymax = 64.5;
@@ -47,7 +50,7 @@ void Plot_2D(string filename){
   ///////////////////////////////////////////////////////
   setstyle(0);
   
-  TChain* tree = new TChain("MMFE8","MMFE8");
+  TChain* tree = new TChain("VMM_data","VMM_data");
 
   tree->AddFile(filename.c_str());
 
@@ -75,8 +78,18 @@ void Plot_2D(string filename){
     
     // hist->Fill(base->CHpulse,base->CHword,base->PDO);
     // histN->Fill(base->CHpulse,base->CHword);
+
+    // if(base->CHpulse != 5)
+    //   continue;
+    // base->CHpulse = base->CHword;
+
     hist->Fill(base->VMM,base->CHpulse,base->PDO);
     hist2->Fill(base->VMM,base->CHpulse,base->PDO*base->PDO);
+    // if(histN->GetBinContent(base->VMM,base->CHpulse) <= 0)
+    //   histN->SetBinContent(base->VMM,base->CHpulse,base->BCID);
+    // else
+    //   if(histN->GetBinContent(base->VMM,base->CHpulse) > base->BCID)
+    // 	histN->SetBinContent(base->VMM,base->CHpulse,base->BCID);
     histN->Fill(base->VMM,base->CHpulse);
   
   }
@@ -88,7 +101,8 @@ void Plot_2D(string filename){
       double N = histN->GetBinContent(x+1,y+1);
       double vbar = v/max(int(N),1);
       double v2bar = v2/max(int(N),1);
-      hist->SetBinContent(x+1,y+1,sqrt(v2bar-vbar*vbar)/vbar);
+      //hist->SetBinContent(x+1,y+1,sqrt(v2bar-vbar*vbar)/vbar);
+      hist->SetBinContent(x+1,y+1,vbar);
     }
   }
 
@@ -103,6 +117,8 @@ void Plot_2D(string filename){
   can->SetGridy();
   
   can->cd();
+
+  hist = histN;
 
   hist->Draw("COLZ");
 
