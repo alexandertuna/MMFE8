@@ -127,8 +127,12 @@ int main(int argc, char* argv[]) {
   }
 
   ofile->cd();
-  vtree->Write();
-  xtree->Write();
+  if (vtree->GetEntries() > 0){
+    vtree->Write();
+  }
+  if (xtree->GetEntries() > 0){
+    xtree->Write();
+  }
   ofile->Close();
 
   return 0;
