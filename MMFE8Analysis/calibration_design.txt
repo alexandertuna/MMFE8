@@ -54,4 +54,4 @@ squared results for both the top and bottom Gaussians, all as branches on the
 same tree.
     -- optionally, either in the same tree or in another tree means and standard
 deviations for the difference.
-  - Fit results for each VMM.
+  - Fit results for each VMM. 
