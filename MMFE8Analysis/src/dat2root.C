@@ -3,6 +3,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <dirent.h>
+#include <ctime>
 
 // ROOT includes
 #include <TROOT.h>
@@ -77,6 +78,7 @@ int main(int argc, char* argv[]) {
   ofile->cd();
   TTree* vtree = new TTree("VMM_data","VMM_data");
   TTree* xtree = new TTree("xADC_data","xADC_data");
+  TTree* time_tree = new TTree("time", "time");
 
   for(int i = 0; i < Nvarv; i++){
     vtree->Branch(sVARv[i].c_str(), &vVARv[i]);
@@ -126,7 +128,16 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  time_t current_time = time(NULL);
+  tm* timestamp = localtime(&current_time);
+  int year = timestamp->tm_year + 1900;
+  time_tree->Branch("Year",&year);
+  time_tree->Branch("Month",&(timestamp->tm_mon));
+  time_tree->Branch("Day",&(timestamp->tm_mday));
+  time_tree->Fill();
+
   ofile->cd();
+  time_tree->Write();
   if (vtree->GetEntries() > 0){
     vtree->Write();
   }
