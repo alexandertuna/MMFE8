@@ -22,6 +22,7 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // Declaration of leaf types
+   // Int_t           MMFE8;
    Int_t           VMM;
    Int_t           CHword;
    Int_t           CHpulse;
@@ -37,6 +38,7 @@ public :
    Int_t           PulseNum;
 
    // List of branches
+   // TBranch        *b_MMFE8;
    TBranch        *b_VMM;   //!
    TBranch        *b_CHword;   //!
    TBranch        *b_CHpulse;   //!
@@ -119,6 +121,7 @@ inline void MMFE8Base::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
+   // fChain->SetBranchAddress("MMFE8", &MMFE8, &b_MMFE8);
    fChain->SetBranchAddress("VMM", &VMM, &b_VMM);
    fChain->SetBranchAddress("CHword", &CHword, &b_CHword);
    fChain->SetBranchAddress("CHpulse", &CHpulse, &b_CHpulse);

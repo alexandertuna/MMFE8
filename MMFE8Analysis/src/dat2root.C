@@ -46,6 +46,7 @@ int main(int argc, char* argv[]) {
   cout << "Output File: " << outputFileName << endl;
 
   vector<string> sVARv;
+  // sVARv.push_back("MMFE8");
   sVARv.push_back("VMM");
   sVARv.push_back("CHword");
   sVARv.push_back("CHpulse");
@@ -61,6 +62,7 @@ int main(int argc, char* argv[]) {
   sVARv.push_back("PulseNum");
 
   vector<string> sVARx;
+  // sVARx.push_back("MMFE8");
   sVARx.push_back("VMM");
   sVARx.push_back("CKTPrunning");
   sVARx.push_back("PDAC");

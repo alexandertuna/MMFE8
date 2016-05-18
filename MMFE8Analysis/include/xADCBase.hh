@@ -22,12 +22,14 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // Declaration of leaf types
+   // Int_t           MMFE8;
    Int_t           VMM;
    Int_t           CKTPrunning;
    Int_t           PDAC;
    Int_t           XADC;
 
    // List of branches
+   // TBranch        *b_MMFE8;
    TBranch        *b_VMM;   //!
    TBranch        *b_CKTPrunning;   //!
    TBranch        *b_PDAC;   //!
@@ -44,7 +46,7 @@ public :
 
 #endif
 
-inline xADCBase::xADCBase(TTree *tree) : fChain(0) 
+inline xADCBase::xADCBase(TTree *tree) : fChain(0)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -99,6 +101,8 @@ inline void xADCBase::Init(TTree *tree)
    fChain = tree;
    fCurrent = -1;
    fChain->SetMakeClass(1);
+
+   // fChain->SetBranchAddress("MMFE8", &MMFE8, &b_MMFE8);
    fChain->SetBranchAddress("VMM", &VMM, &b_VMM);
    fChain->SetBranchAddress("CKTPrunning", &CKTPrunning, &b_CKTPrunning);
    fChain->SetBranchAddress("PDAC", &PDAC, &b_PDAC);
