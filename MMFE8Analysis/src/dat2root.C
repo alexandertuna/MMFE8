@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
   ofile->cd();
   TTree* vtree = new TTree("VMM_data","VMM_data");
   TTree* xtree = new TTree("xADC_data","xADC_data");
-  TTree* time_tree = new TTree("time", "time");
+  TTree* time_tree = new TTree("date", "Calibration date");
 
   for(int i = 0; i < Nvarv; i++){
     vtree->Branch(sVARv[i].c_str(), &vVARv[i]);
@@ -128,6 +128,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  // Grab the current date and time, store them as YYYY MM DD integers
   time_t current_time = time(NULL);
   tm* timestamp = localtime(&current_time);
   int year = timestamp->tm_year + 1900;
@@ -136,6 +137,7 @@ int main(int argc, char* argv[]) {
   time_tree->Branch("Day",&(timestamp->tm_mday));
   time_tree->Fill();
 
+  // Always write the date tree; write the VMM data and xADC data trees if full.
   ofile->cd();
   time_tree->Write();
   if (vtree->GetEntries() > 0){
