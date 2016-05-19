@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include <TCanvas.h>
 #include <TH1D.h>
 #include <TF1.h>
@@ -17,18 +18,20 @@ using namespace std;
 
 void PDAC_hists(){
 
-  string filename = "../xADC_testdata.root";
+  string filename = "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.dat.root";
   string varname = "xADC voltage (V)";
+  bool output_enable = false;
   string outputfile = "./xADC_test1";
 
+  bool Gaussian_fit = true;
   int vmm = 1;
-  int pdacs[] = {20, 40, 60, 80, 100, 120, 140};
+  int pdacs[] = {40, 140};
   int colors[] = {kViolet+8, kBlue+4, kBlue, kAzure+10, kTeal-5, \
     kTeal+3, kGreen+1, kSpring-8};
 
   ///////////////////////////////////////////////////////
 
-  TChain* tree = new TChain("MMFE8","MMFE8");
+  TChain* tree = new TChain("xADC_data","xADC_data");
 
   tree->AddFile(filename.c_str());
 
@@ -82,11 +85,13 @@ void PDAC_hists(){
   for (int i = 0; i < num_pdacs; i++){
      mean[i] = hists[i]->GetMean();
      stdev[i] = hists[i]->GetStdDev();
-     hists[i]->Fit("gaus");
-     current_fit = hists[i]->GetFunction("gaus");
-     current_fit->SetLineStyle(5);
-     current_fit->SetLineWidth(1);
-     current_fit->SetLineColor(kGray+2);//colors[i]);
+     if Gaussian_fit {
+       hists[i]->Fit("gaus");
+       current_fit = hists[i]->GetFunction("gaus");
+       current_fit->SetLineStyle(5);
+       current_fit->SetLineWidth(1);
+       current_fit->SetLineColor(kGray+2);//colors[i]);
+     }
      current_value = hists[i]->GetMaximum();
      if (current_value > plot_max){
        plot_max = current_value;
@@ -113,8 +118,10 @@ void PDAC_hists(){
   }
   legend->Draw();
 
-  TFile* test = new TFile((outputfile + ".root").c_str(),"RECREATE");
-  test->cd();
-  can->Write();
-  test->Close();
+  if output_enable {
+    TFile* test = new TFile((outputfile + ".root").c_str(),"RECREATE");
+    test->cd();
+    can->Write();
+    test->Close();
+  }
 }
