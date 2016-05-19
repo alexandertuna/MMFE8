@@ -205,6 +205,9 @@ class MMFE8:
             if print_mode:
                 pd = ['{.4f}'.format(x * 1.0 / 4096.0) for x in pd_ints]
                 print 'XADC = ' + " ".join(pd)
+
+            # TODO: Fix definition of pulses_on so that it accurately detects;
+            # figure out why it only seems to have a single peak.
             pulses_on = self.readout_runlength[24]
             with open(filename, 'a') as myfile:
                 for j, xADC in enumerate(pd_ints):
@@ -830,6 +833,7 @@ class MMFE8:
         vmm.check_button_SBMX.set_active(True)
         vmm.check_button_SCMX.set_active(False)
         vmm.combo_SM.set_active(1)
+        self.readout_runlength[24] = 1
         self.entry_pulses.set_text("999")
         self.entry_pulses.activate()
         # self.readout_runlength[24] = 0
