@@ -22,7 +22,7 @@ using namespace std;
 void Plot_1D_BCID(){
 
   //string filename = "data/BCID_02May16/BCID_test_1.root";
-  string filename = "test.root";
+  string filename = "BCID_fullrun.dat.root";
   
   int iVMM = 7;
   int iCH  = 15;
@@ -73,8 +73,8 @@ void Plot_1D_BCID(){
     if(base->VMM != iVMM)
       continue;
 
-    // if(base->CHpulse != iCH)
-    //   continue;
+    if(base->CHpulse != iCH)
+      continue;
 
     //if(base->CHword > iCH && base->CHword-10 <= iCH){
       if(base->CHword != iCH || true){
@@ -95,7 +95,7 @@ void Plot_1D_BCID(){
     }
   }
 
-  for(int i = 0; i < 100; i++){
+  for(int i = 0; i < 50; i++){
     cout << N_BCID[i] << " entries for pulse " << i << endl;
     //BCID[i] = int(BCID[i]/N_BCID[i] + 0.5);
     BCID[i] = hist_BCID[i]->GetMaximumBin()-1;

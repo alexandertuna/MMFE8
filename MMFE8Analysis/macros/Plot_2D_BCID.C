@@ -15,7 +15,7 @@ using namespace std;
 void Plot_2D_BCID(){
 
   //string filename = "data/BCID_02May16/BCID_test_1.root";
-  string filename = "alltest.root";
+  string filename = "BCID_fullrun.dat.root";
   
   int iVMM = 7;
   int iCH  = 15;
@@ -55,7 +55,7 @@ void Plot_2D_BCID(){
       continue;
 
     if(base->CHpulse != iCH)
-      continue;
+    continue;
 
     if(base->CHword != iCH)
       continue;
