@@ -23,7 +23,7 @@ void square_wave_fit(){
   bool output_enable = false;
   string outputfile = "./xADC_test1";
 
-  bool Gaussian_fit = true;
+  bool Gaussian_fit = false;
   int vmm = 1;
   int pdac = 140;
   int colors[] = {kViolet+8, kBlue+4, kBlue, kAzure+10, kTeal-5, \
@@ -52,7 +52,7 @@ void square_wave_fit(){
   for (int i = 0; i < N; i++){
     base->GetEntry(i);
 
-    if ((vmm == base->VMM) && (pdac == base->PDAC) && (base->CKTPrunning == 0)) {
+    if ((vmm == base->VMM) && (pdac == base->PDAC) && (base->CKTPrunning)) {
       hist->Fill(float(base->XADC) / 4096.0);
     }
   }
@@ -97,7 +97,7 @@ void square_wave_fit(){
   hist->GetYaxis()->CenterTitle();
   hist->GetYaxis()->SetRangeUser(0.,plot_max*1.1);
   hist->GetXaxis()->SetRangeUser(0.0, //mean[1]+(6*stdev[1]));
-                                0.2);
+                                0.5);
 
   // if Gaussian_fit {
   //   low_fit->Draw("same");

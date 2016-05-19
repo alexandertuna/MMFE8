@@ -20,7 +20,7 @@ using namespace std;
 
 void xADC_plotter(){
 
-  string filename = "../xADC_testdata.root";
+  string filename = "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.dat.root";
   string varname = "xADC voltage (V)";
   string outputfile = "./xADC_test1";
 
@@ -30,7 +30,7 @@ void xADC_plotter(){
 
   ///////////////////////////////////////////////////////
 
-  TChain* tree = new TChain("MMFE8","MMFE8");
+  TChain* tree = new TChain("xADC_data","MMFE8");
 
   tree->AddFile(filename.c_str());
 
