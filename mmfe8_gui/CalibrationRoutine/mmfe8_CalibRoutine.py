@@ -205,9 +205,6 @@ class MMFE8:
             if print_mode:
                 pd = ['{.4f}'.format(x * 1.0 / 4096.0) for x in pd_ints]
                 print 'XADC = ' + " ".join(pd)
-
-            # TODO: Fix definition of pulses_on so that it accurately detects;
-            # figure out why it only seems to have a single peak.
             pulses_on = self.readout_runlength[24]
             with open(filename, 'a') as myfile:
                 for j, xADC in enumerate(pd_ints):
@@ -815,11 +812,11 @@ class MMFE8:
         vmm.entry_SDP_.set_text(str(tpDAC))
         vmm.entry_SDP_.activate()
         # print "SDP entry: " + vmm.entry_SDP_.get_text()
-        self.readout_runlength[24] = 0
+        # self.readout_runlength[24] = 0
         # self.entry_pulses.set_text("0")
         # self.entry_pulses.activate()
 
-        # No idea what this actually does, but I hope it works:
+        # Set all VMMs to read out and be configured:
         for i in range(1,9):
             self.readout_runlength[15+i] = 1
             self.vmm_cfg_sel[i-1] = 1
@@ -836,26 +833,28 @@ class MMFE8:
         vmm.check_button_SBMX.set_active(True)
         vmm.check_button_SCMX.set_active(False)
         vmm.combo_SM.set_active(1)
+
         # self.readout_runlength[24] = 0
         # Send the configuration
-        #self._send_configuration("readout_runlength")
-        # write rest of configuration
-        #self.button_write.clicked()
+
         # Copied a lot of what the CRLoop point code does:
         self.write_VMM_CRLoop()
         self.button_resetVMM.clicked()
         self.button_SystemInit.clicked()
         self.button_SystemLoad.clicked()
-        self.button_SystemInit.clicked()
-        self.button_SystemLoad.clicked()
-        #self.readout_runlength[24] = 1
-        #self.entry_pulses.set_text("999")
-        #self.entry_pulses.activate()
+        # self.button_SystemInit.clicked()
+        # self.button_SystemLoad.clicked()
+
+        # Begin pulsing
+        self.readout_runlength[24] = 1
+        self.entry_pulses.set_text("999")
+        self.entry_pulses.activate()
 
         # Actually read values
         self.read_xadc(filename = self.CRLoop_Output_dat, pulse_DAC_value=tpDAC, num_points = 1000)
 
         # Stop pulsing.
+        self.readout_runlength[24] = 0
         self.entry_pulses.set_text("0")
         self.entry_pulses.activate()
 
