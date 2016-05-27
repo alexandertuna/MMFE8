@@ -18,14 +18,14 @@ using namespace std;
 
 void square_wave_fit(){
 
-  string filename = "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.dat.root";
+  string filename = "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.root";
   string varname = "xADC voltage (V)";
   bool output_enable = false;
   string outputfile = "./xADC_test1";
 
-  bool Gaussian_fit = false;
-  int vmm = 1;
-  int pdac = 140;
+  bool Gaussian_fit = true;
+  int vmm = 3;
+  int pdac = 80;
   int colors[] = {kViolet+8, kBlue+4, kBlue, kAzure+10, kTeal-5, \
     kTeal+3, kGreen+1, kSpring-8};
 
@@ -58,23 +58,12 @@ void square_wave_fit(){
     }
   }
 
-  TH1D* low_hist = hist->Clone("low peak");
-  TH1D* high_hist = low_hist->Clone("high peak");
+  // TH1D* low_hist = hist->Clone("low peak");
+  // TH1D* high_hist = low_hist->Clone("high peak");
   double hist_mean = hist->GetMean();
-  low_hist->GetXaxis()->SetRange(min_V, hist_mean);
-  high_hist->GetXaxis()->SetRange(hist_mean, max_V);
+  //low_hist->GetXaxis()->SetRange(min_V, hist_mean);
+  //high_hist->GetXaxis()->SetRange(hist_mean, max_V);
 
-  if Gaussian_fit {
-    TF1* low_fit = new TF1("low fit", "gaus", min_V, hist_mean);
-    TF1* high_fit = new TF1("high fit", "gaus", hist_mean, max_V);
-    low_hist->Fit("low fit", "R");
-    low_hist->Fit("high fit", "R");
-    // TF1* low_fit = low_hist->GetFunction("gaus");
-    // TF1* high_fit = high_hist->GetFunction("gaus");
-    // low_fit->SetLineStyle(5);
-    // current_fit->SetLineWidth(1);
-    // current_fit->SetLineColor(kGray+2);//colors[i]);
-  }
 
   TCanvas* can = new TCanvas("can","can",600,500);
   can->SetTopMargin(0.05);
@@ -99,7 +88,21 @@ void square_wave_fit(){
   hist->GetYaxis()->SetRangeUser(0.,plot_max*1.1);
   hist->GetXaxis()->SetRangeUser(0.0, //mean[1]+(6*stdev[1]));
                                 0.5);
+  //hist->Draw();
 
+  if Gaussian_fit {
+    TF1* low_fit = new TF1("low fit", "gaus", min_V, hist_mean);
+    low_fit->SetLineColor(kBlue);
+    TF1* high_fit = new TF1("high fit", "gaus", hist_mean, max_V);
+    high_fit->SetLineColor(kTeal+3);
+    hist->Fit("low fit", "R");
+    hist->Fit("high fit", "R");
+    // TF1* low_fit = low_hist->GetFunction("gaus");
+    // TF1* high_fit = high_hist->GetFunction("gaus");
+    // low_fit->SetLineStyle(5);
+    // current_fit->SetLineWidth(1);
+    // current_fit->SetLineColor(kGray+2);//colors[i]);
+  }
   if Gaussian_fit {
     low_fit->Draw("same");
     high_fit->Draw("same");
