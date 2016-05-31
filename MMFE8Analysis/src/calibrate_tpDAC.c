@@ -89,8 +89,8 @@ int main(int argc, char* argv[]){
       fun->SetParameter(3, N_tot / 2);
       fun->SetParameter(1, mu_tot - sig_tot); // mu0
       fun->SetParameter(4, mu_tot + sig_tot);
-      fun->SetParameter(2, 2); // sig0 (estimate from previous xADC fits)
-      fun->SetParameter(5, 2);
+      fun->SetParameter(2, 2 * fC_per_xADC_count); // sig0 (estimate from previous xADC fits)
+      fun->SetParameter(5, 2 * fC_per_xADC_count);
 
       // Limits:
       fun->SetParLimits(0, 0, 10 * N_tot); // 0 < N0, N1 < 2Ntot
