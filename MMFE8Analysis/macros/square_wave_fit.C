@@ -25,7 +25,7 @@ void square_wave_fit(){
 
   bool Gaussian_fit = true;
   int vmm = 3;
-  int pdac = 80;
+  int pdac = 60;
   int colors[] = {kViolet+8, kBlue+4, kBlue, kAzure+10, kTeal-5, \
     kTeal+3, kGreen+1, kSpring-8};
 

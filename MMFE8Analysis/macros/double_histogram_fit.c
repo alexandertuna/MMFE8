@@ -10,8 +10,8 @@ using namespace std;
 
 /***************  RUN SETTINGS  ***************/
 const string input_file = "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.root";
-const unsigned int tpDAC = 160;
-const unsigned int vmm = 8;
+const unsigned int tpDAC = 60;
+const unsigned int vmm = 3;
 
 
 /**************  CODE BELOW  ***************/
@@ -55,7 +55,7 @@ void double_histogram_fit(){
   const float sig_tot = hist->GetStdDev();
   TF1* fun = new TF1(func_name.c_str(), double_gaus_function, min_count,
                               max_count, 6);
-  
+
   // cout << endl << "Created function" << endl;
 
   // Defaults:
@@ -100,7 +100,7 @@ void double_histogram_fit(){
 // General normal distribution with integral N
 double normal_distribution(double N, double mu, double sg, double x){
   double pi = atan(1.)*4;
-  double G = exp(-((x - mu)**2) / (2 * (sg**2))) / (sqrt(2 * pi) * sg);
+  double G = exp(-pow((x - mu),2) / (2 * pow(sg,2))) / (sqrt(2 * pi) * sg);
   return N * G;
 }
 
