@@ -59,7 +59,7 @@ int main(int argc, char* argv[]){
   const unsigned int N = tree->GetEntries();
   for (unsigned int i = 0; i < N; i++){
     base->GetEntry(i);
-    if !(hists[base->VMM - 1].count(base->PDAC)){
+    if (!(hists[base->VMM - 1].count(base->PDAC))){
       char hist_name[100];
       sprintf(hist_name, "VMM %d, tpDAC %d", base->VMM, base->PDAC);
       hists[base->VMM - 1][base->PDAC] = new TH1D(hist_name, hist_name, 4096,
@@ -68,8 +68,8 @@ int main(int argc, char* argv[]){
     hists[base->VMM - 1][base->PDAC]->Fill(base->XADC * fC_per_xADC_count);
   }
 
-  TF1* fun = new TF1(func_name.c_str(), double_gaus_function, min_count,
-                              max_count, 6);
+  TF1* fun = new TF1(func_name.c_str(), double_gaus_function, min_Q,
+                              max_Q, 6);
   TF1* low_gauss = new TF1("low_gauss", "gaus", min_Q, 60);
   TF1* high_gauss = new TF1("high_gauss", "gaus", 60, max_Q);
 
@@ -96,9 +96,9 @@ int main(int argc, char* argv[]){
       fun->SetParLimits(0, 0, 10 * N_tot); // 0 < N0, N1 < 2Ntot
       fun->SetParLimits(3, 0, 10 * N_tot);
       fun->SetParLimits(1, 0, mu_tot); // 0 < mu0 < mu_tot
-      fun->SetParLimits(4, mu_tot, 2 * max_count);
-      fun->SetParLimits(2, 0, max_count); // 0 < sig0, sig1 < large number
-      fun->SetParLimits(5, 0, max_count);
+      fun->SetParLimits(4, mu_tot, 2 * max_Q);
+      fun->SetParLimits(2, 0, max_Q); // 0 < sig0, sig1 < large number
+      fun->SetParLimits(5, 0, max_Q);
 
       // Perform fit
       hist->Fit(func_name.c_str(), "E");
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]){
 
       // This is correct unless there's low-frequency noise that would give
       // covariance. General formula sigma = sqrt(s1^2 + s2^2 - 2*covariance)
-      sigQ = sqrt(high_sig**2 + low_sig**2);
+      sigQ = sqrt(pow(high_sig, 2) + pow(low_sig, 2));
 
       fit_tree->Fill();
     }
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]){
 // General normal distribution with integral N
 double normal_distribution(double N, double mu, double sg, double x){
   double pi = atan(1.)*4;
-  double G = exp(-((x - mu)**2) / (2 * (sg**2))) / (sqrt(2 * pi) * sg);
+  double G = exp(-pow(x - mu,2) / (2 * pow(sg,2))) / (sqrt(2 * pi) * sg);
   return N * G;
 }
 

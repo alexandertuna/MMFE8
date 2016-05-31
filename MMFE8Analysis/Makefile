@@ -15,16 +15,16 @@ CC_FILES := $(wildcard src/*.cc)
 HH_FILES := $(wildcard include/*.hh)
 OBJ_FILES := $(addprefix $(OUTOBJ),$(notdir $(CC_FILES:.cc=.o)))
 
-all: dat2root xadc2root
+all: dat2root calibrate_tpDAC
 
 dat2root:  $(SRCDIR)dat2root.C $(OBJ_FILES) $(HH_FILES)
 	$(CXX) $(CXXFLAGS) -o dat2root $(GLIBS) $ $<
 	touch dat2root
 	# $(CXX) $(CXXFLAGS) -o dat2root $(OUTOBJ)*.o $(GLIBS) $ $<	
 
-xadc2root:  $(SRCDIR)xadc2root.C $(OBJ_FILES) $(HH_FILES)
-	$(CXX) $(CXXFLAGS) -o xdat2root $(GLIBS) $ $<
-	touch xdat2root
+calibrate_tpDAC:  $(SRCDIR)calibrate_tpDAC.c $(OBJ_FILES) $(HH_FILES)
+	$(CXX) $(CXXFLAGS) -o calib_tpDAC $(GLIBS) $ $<
+	touch calib_tpDAC
 
 $(OUTOBJ)%.o: src/%.cc include/%.hh
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -34,3 +34,4 @@ clean:
 	rm -rf *.dSYM
 	rm -f dat2root
 	rm -f xdat2root
+	rm -f calib_tpDAC
