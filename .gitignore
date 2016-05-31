@@ -15,3 +15,5 @@ xdat2root
 *.o
 *.png
 *.pdf
+*.jpg
+*.jpeg
