@@ -11,8 +11,9 @@ using namespace std;
 
 /************ User-editable constants ************/
 const string input_filename = \
+  //  "xadc_calib.root";
   "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.root";
-const int vmm = 3;
+const int vmm = 6;
 
 /*********************       CODE      *******************/
 const string plot_name = "Input charge vs. test pulse DAC";
