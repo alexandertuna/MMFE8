@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
   cout << "Output File: " << outputFileName << endl;
 
   vector<string> sVARv;
-  // sVARv.push_back("MMFE8");
+  sVARv.push_back("MMFE8");
   sVARv.push_back("VMM");
   sVARv.push_back("CHword");
   sVARv.push_back("CHpulse");
@@ -54,12 +54,15 @@ int main(int argc, char* argv[]) {
   sVARv.push_back("TDO");
   sVARv.push_back("BCID");
   sVARv.push_back("BCIDgray");
+  sVARv.push_back("BCIDtrig");
   sVARv.push_back("TPDAC");
   sVARv.push_back("THDAC");
   sVARv.push_back("Delay");
   sVARv.push_back("TACslope");
   sVARv.push_back("PeakTime");
   sVARv.push_back("PulseNum");
+  sVARv.push_back("FIFO");
+  sVARv.push_back("Ntrig");
 
   vector<string> sVARx;
   // sVARx.push_back("MMFE8");
@@ -89,12 +92,22 @@ int main(int argc, char* argv[]) {
     xtree->Branch(sVARx[i].c_str(), &vVARx[i]);
   }
 
+  vector<bool> vFoundv (Nvarv, false);
+  vector<bool> vFoundx (Nvarx, false);
+
   // Loop through the entire input file
   if(ifile.is_open()){
     while(getline(ifile,line)){
       // Flags for which kind of line it is
       int num_xadc_matches = 0;
       int num_vmm_matches = 0;
+      
+      // check if variables found in the line
+      for(int v = 0; v < Nvarv; v++)
+	vFoundv[v] = false;
+      for(int x = 0; x < Nvarx; x++)
+	vFoundx[x] = false;
+
       // Read into buffer
       char sline[1000];
       sprintf(sline,"%s",line.c_str());
@@ -104,26 +117,36 @@ int main(int argc, char* argv[]) {
         if (num_xadc_matches < 3) {
           for(int v = 0; v < Nvarv; v++){
 	    if(strncmp((sVARv[v]+"=").c_str(),p,sVARv[v].length()+1)==0){
-        	    sscanf(p,(sVARv[v]+"=%d").c_str(), &vVARv[v]);
+	      sscanf(p,(sVARv[v]+"=%d").c_str(), &vVARv[v]);
               num_vmm_matches++;
-        	    break;
-        	  }
-        	} // End vmm part
+	      vFoundv[v] = true;
+	      break;
+	    }
+	  } // End vmm part
         } if (num_vmm_matches < 3) {
-          for (int v = 0; v < Nvarx; v++) {
-            if(strncmp(sVARx[v].c_str(),p,sVARx[v].length())==0){
-        	    sscanf(p,(sVARx[v]+"=%d").c_str(), &vVARx[v]);
+          for (int x = 0; x < Nvarx; x++) {
+            if(strncmp(sVARx[x].c_str(),p,sVARx[x].length())==0){
+	      sscanf(p,(sVARx[x]+"=%d").c_str(), &vVARx[x]);
               num_xadc_matches++;
-        	    break;
-        	  }
+	      vFoundv[x] = true;
+	      break;
+	    }
           }
         } // End xadc part
       	p = strtok(NULL, " ");
       } // End of line read
+
       if (num_vmm_matches > 1){
+	// set unfound vars to -1
+	for(int v = 0; v < Nvarv; v++)
+	  if(vFoundv[v] == false)
+	    vVARv[v] = -1;
         vtree->Fill();
         //printf("%s -> VMM\n", line.c_str());
       } else {//if (num_xadc_matches > Nvarx)
+	for(int x = 0; x < Nvarx; x++)
+	  if(vFoundx[x] == false)
+	    vVARx[x] = -1;
         xtree->Fill();
         //printf("%s -> xADC\n", line.c_str());
       }

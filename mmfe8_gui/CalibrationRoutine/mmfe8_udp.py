@@ -55,16 +55,16 @@ class udp_stuff:
         sock.settimeout(5)
         try:
             #send data
-            print >>sys.stderr, 'sending "%s"' % MESSAGE
-            print "to " + self.UDP_IP + ", " + str(self.UDP_PORT)
+            #print >>sys.stderr, 'sending "%s"' % MESSAGE
+            #print "to " + self.UDP_IP + ", " + str(self.UDP_PORT)
             sent = sock.sendto(MESSAGE,(self.UDP_IP, self.UDP_PORT))
             #receive response
-            print >>sys.stderr, 'waiting for response'
+            #print >>sys.stderr, 'waiting for response'
             data, server = sock.recvfrom(4096)
-            print >>sys.stderr, 'received:\n' + data
+            #print >>sys.stderr, 'received:\n' + data
         except:
             print "ERROR:  ", sys.exc_info()[0]
-        print "closing socket\n--=====================--\n"
+        #print "closing socket\n--=====================--\n"
         sock.close()
         return data
 

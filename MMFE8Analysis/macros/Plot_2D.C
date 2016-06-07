@@ -37,12 +37,12 @@ void Plot_2D(string filename){
   string varYname = "Recorded CH # [1-64]";
   string varZname = "# Recorded Pulses [/100 pulsed]";
   //string varZname = "#sigma(PDO) / #bar{PDO}";
-  int Nx = 8;
-  double Xmin = 0.5;
-  double Xmax = 8.5;
-  // int Nx = 64;
+  // int Nx = 8;
   // double Xmin = 0.5;
-  // double Xmax = 64.5;
+  // double Xmax = 8.5;
+  int Nx = 64;
+  double Xmin = 0.5;
+  double Xmax = 64.5;
   int Ny = 64;
   double Ymin = 0.5;
   double Ymax = 64.5;
@@ -73,11 +73,11 @@ void Plot_2D(string filename){
   for(int i = 0; i < N; i++){
     base->GetEntry(i);
 
-    // if(base->VMM != 6)
-    //   continue;
+    if(base->VMM != 2)
+      continue;
     
     // hist->Fill(base->CHpulse,base->CHword,base->PDO);
-    // histN->Fill(base->CHpulse,base->CHword);
+    histN->Fill(base->CHpulse,base->CHword);
 
     // if(base->CHpulse != 5)
     //   continue;
@@ -89,8 +89,8 @@ void Plot_2D(string filename){
     //   histN->SetBinContent(base->VMM,base->CHpulse,base->BCID);
     // else
     //   if(histN->GetBinContent(base->VMM,base->CHpulse) > base->BCID)
-    // 	histN->SetBinContent(base->VMM,base->CHpulse,base->BCID);
-    histN->Fill(base->VMM,base->CHpulse);
+    // histN->SetBinContent(base->VMM,base->CHpulse,base->BCID);
+    // histN->Fill(base->VMM,base->CHpulse);
   
   }
 
