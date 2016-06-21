@@ -53,7 +53,7 @@ from mmfe8_guiUtil import loop_pair
 class MMFE8:
     """
     # ipAddr will be obtained from an xml file in the future
-    ipAddr = ["127.0.0.1","192.168.0.130","192.168.0.100","192.168.0.101","192.168.0.102","192.168.0.103","192.168.0.104","192.168.0.105","192.168.0.106",
+    ipAddr = ["127.0.0.1","192.168.0.130","192.168.0.101","192.168.0.102","192.168.0.103","192.168.0.104","192.168.0.105","192.168.0.106",
               "192.168.0.107","192.168.0.108","192.168.0.109","192.168.0.110","192.168.0.111","192.168.0.112","192.168.0.167"]
     # each is the starting address for the 51 config regs for each vmm 
     mmfeID = 0
@@ -595,14 +595,74 @@ class MMFE8:
             if (x < 0) or (1023 < x):
                 print "Test Pulse DAC out of range"
                 print
-                return None 
-
+                return None
+        
         self.CRLoop_tpDAC = val
         tpDACstr = str(val[0])
         for x in val[1:]:
             tpDACstr += ", "+str(x)
         print "**CR-Loop** Setting Test Pulse DAC: %s" % tpDACstr
         print
+ 
+    def SetDelayCount(self,delay):
+        if delay < 0:
+            return None
+        
+        MSGsend1 = "W 0x44A10138 {0:02x} \0\n".format(delay)
+        self.udp.udp_client(MSGsend1,self.UDP_IP,self.UDP_PORT)
+            # sleep(.1)
+            
+
+    def fix_delayCount(self,widget,entry):
+        try:
+            entry = entry.get_text()
+            value = int(entry)
+        except ValueError:
+            print "Delay Count  must be decimal integer"
+            print
+            return None                
+        if (value < 0) or (100 < value):
+            print "Delay Count  out of range [0-100]"
+            print
+            return None 
+
+        self.CRLoop_delayCount = [value]
+        print "**CR-Loop** Setting Delay Count: %s" % str(value)
+        print
+
+    def loop_delayCount(self,widget,entry):
+        try:
+            entry = entry.get_text()
+            entry = entry.split(',')
+            val = []
+            for x in entry:
+                x.strip()
+                val += [int(x)]
+        except ValueError:
+            print "Delay Count  must be decimal integer"
+            print
+            return None
+        for x in val:               
+            if (x < 0) or (100 < x):
+                print "Delay Count  out of range [0-100]"
+                print
+                return None 
+
+        self.CRLoop_delayCount = val
+        delaystr = str(val[0])
+        for x in val[1:]:
+            delaystr += ", "+str(x)
+        print "**CR-Loop** Setting Delay Count: %s" % delaystr
+        print
+
+    def loop_all_delayCount(self,widget):
+        self.CRLoop_delayCount = range(0,31)
+        delaystr = str(self.CRLoop_delayCount[0])
+        for x in self.CRLoop_delayCount[1:]:
+           delaystr += ", "+str(x)
+        print "**CR-Loop** Setting Delay Count: %s" % delaystr
+        print  
+
 
     def fix_thDAC(self,widget,entry):
         try:
@@ -773,19 +833,19 @@ class MMFE8:
         print "**CR-Loop** Setting loop over Peaking Times"
         print
 
-    def fix_delay(self, widget):
-        active = widget.get_active()
-        if active < 0:
-            return None
+    # def fix_delay(self, widget):
+    #     active = widget.get_active()
+    #     if active < 0:
+    #         return None
 
-        self.CRLoop_delay = [active]
-        print "**CR-Loop** Setting Delay Time: %s" % str(active)
-        print
+    #     self.CRLoop_delay = [active]
+    #     print "**CR-Loop** Setting Delay Time: %s" % str(active)
+    #     print
 
-    def loop_delay(self, widget):
-        self.CRLoop_delay = range(0,5)
-        print "**CR-Loop** Setting loop over Delay Times"
-        print
+    # def loop_delay(self, widget):
+    #     self.CRLoop_delay = range(0,5)
+    #     print "**CR-Loop** Setting loop over Delay Times"
+    #     print
 
     def activate_channel(self, iVMM, ich):
         if iVMM < 1 or iVMM > 8:
@@ -833,7 +893,7 @@ class MMFE8:
         Loop_VMM   = self.CRLoop_VMM
         Loop_tpDAC = self.CRLoop_tpDAC
         Loop_thDAC = self.CRLoop_thDAC
-        Loop_delay = self.CRLoop_delay
+        Loop_delay = self.CRLoop_delayCount
         Loop_TACslope = self.CRLoop_TACslope
         Loop_peakingtime = self.CRLoop_peakingtime
 
@@ -890,14 +950,10 @@ class MMFE8:
                                     for ivmm in self.Cur_VMM:
                                         if ivmm is 1:
                                             self.deactivate_channel(ivmm,1)
-                                            self.deactivate_channel(ivmm,37)
-                                            self.deactivate_channel(ivmm,62)
+                                            self.deactivate_channel(ivmm,2)
                                         if ivmm is 2:
                                             self.deactivate_channel(ivmm,1)
-                                            self.deactivate_channel(ivmm,2)
-                                            self.deactivate_channel(ivmm,3)
                                             self.deactivate_channel(ivmm,4)
-                                            self.deactivate_channel(ivmm,46)
                                         if ivmm is 3:
                                             self.deactivate_channel(ivmm,2)
                                         if ivmm is 5:
@@ -915,7 +971,7 @@ class MMFE8:
                                             self.deactivate_channel(ivmm,2)
 
                                     # set delay counts
-                                    self.combo_DC.set_active(delay)
+                                    self.SetDelayCount(delay)
 
                                     # run configure and run DAQ for this configuration
                                     self.run_CRLoop_point()
@@ -1216,7 +1272,7 @@ class MMFE8:
                         TDO = fifo32 & 255
                         
                         fifo32 = fifo32 >> 8  # we will later check for vmm number
-                        VMMword = (fifo32 & 7) + 1 # get vmm number
+                        VMMword = (fifo32 & 7) # get vmm number
 
                         BCID = 0
                         if (n+1) < 12:
@@ -1247,7 +1303,7 @@ class MMFE8:
                             myfile.write(output_string+'\n')
 
                         # data word counting for early termination
-                        if CHword is self.Cur_chan or True:
+                        if CHword is self.Cur_chan:
                             done = True
                             index = 0
                             for ivmm in self.Cur_VMM:
@@ -1738,7 +1794,7 @@ class MMFE8:
         self.button_loop_allchan.connect("toggled", self.loop_all_chan)
         loop_buttons = [self.button_loop_chan,self.button_loop_allchan]
         
-        self.frame_chan = loop_pair("Channels",self.button_fix_chan,loop_buttons)
+        self.frame_chan = loop_pair("Channels [1-64]",self.button_fix_chan,loop_buttons)
         self.buttons_Loop.pack_start(self.frame_chan.frame,expand=True)
 
         # fix VMM
@@ -1761,24 +1817,30 @@ class MMFE8:
         self.button_loop_all_VMM.connect("toggled", self.loop_all_VMM)
         loop_buttons = [self.button_loop_VMM,self.button_loop_all_VMM]
         
-        self.frame_VMM = loop_pair("VMM's",self.button_fix_VMM,loop_buttons)
+        self.frame_VMM = loop_pair("VMM's [1-8]",self.button_fix_VMM,loop_buttons)
         self.buttons_Loop.pack_start(self.frame_VMM.frame,expand=True)
 
         # fix Delay Time
-        self.button_fix_delay = gtk.combo_box_new_text()
-        self.button_fix_delay.append_text("0 st")        
-        self.button_fix_delay.append_text("1 st")
-        self.button_fix_delay.append_text("2 st")
-        self.button_fix_delay.append_text("3 st")
-        self.button_fix_delay.append_text("4 st")
-        self.button_fix_delay.connect("changed", self.fix_delay)
-        self.button_fix_delay.set_active(0)
+        self.button_fix_delay = gtk.Entry(max=3)
+        self.button_fix_delay.set_editable(True)
+        self.button_fix_delay.set_width_chars(6)
+        self.button_fix_delay.set_text("0")
+        self.button_fix_delay.connect("activate", self.fix_delayCount, self.button_fix_delay)
+        self.button_fix_delay.activate()
+
+        # loop Delay Time
+        self.button_loop_delay = gtk.Entry()
+        self.button_loop_delay.set_editable(True)
+        self.button_loop_delay.set_width_chars(8)
+        self.button_loop_delay.set_text("0,1,2,3,4")
+        self.button_loop_delay.connect("activate", self.loop_delayCount, self.button_loop_delay)
 
         # loop all Delay Times
-        self.button_loop_delay = gtk.CheckButton("All Delay Times")
-        self.button_loop_delay.connect("toggled", self.loop_delay)
+        self.button_loop_alldelay = gtk.CheckButton("Delays [0,30]")
+        self.button_loop_alldelay.connect("toggled", self.loop_all_delayCount)
 
-        self.frame_delay = loop_pair("Delay Time",self.button_fix_delay,self.button_loop_delay)
+        loop_buttons = [self.button_loop_delay,self.button_loop_alldelay]
+        self.frame_delay = loop_pair("Delay Count",self.button_fix_delay,loop_buttons)
         self.buttons_Loop.pack_start(self.frame_delay.frame,expand=True)
         
         # fix test pulse DAC
