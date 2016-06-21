@@ -43,9 +43,12 @@ void Plot_2D(string filename){
   int Nx = 64;
   double Xmin = 0.5;
   double Xmax = 64.5;
-  int Ny = 64;
-  double Ymin = 0.5;
-  double Ymax = 64.5;
+  // int Ny = 64;
+  // double Ymin = 0.5;
+  // double Ymax = 64.5;
+  int Ny = 4097;
+  double Ymin = -0.5;
+  double Ymax = 4096.5;
 
   ///////////////////////////////////////////////////////
   setstyle(0);
@@ -73,11 +76,18 @@ void Plot_2D(string filename){
   for(int i = 0; i < N; i++){
     base->GetEntry(i);
 
-    if(base->VMM != 2)
+    if(base->VMM != 0)
+      continue;
+
+    if(base->CHword == 24)
+      continue;
+
+    if(base->Delay != 30)
       continue;
     
     // hist->Fill(base->CHpulse,base->CHword,base->PDO);
-    histN->Fill(base->CHpulse,base->CHword);
+    //histN->Fill(base->CHpulse,base->CHword);
+    histN->Fill(base->CHpulse,base->BCID);
 
     // if(base->CHpulse != 5)
     //   continue;

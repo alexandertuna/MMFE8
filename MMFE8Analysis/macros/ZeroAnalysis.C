@@ -142,6 +142,8 @@ void ZeroAnalysis(string filename){
 	}
       }
       // prepare new event
+      // if(base->FIFO > 20)
+      // 	continue;
       Ntrig_cur = base->Ntrig;
       has_zero = false;
       FIFO_cur = base->FIFO;
