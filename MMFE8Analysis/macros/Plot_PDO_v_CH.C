@@ -57,6 +57,7 @@ void Plot_PDO_v_CH(string filename){
     base->GetEntry(i);
 
     hist->Fill(base->CHword+64*base->VMM,base->PDO);
+
   }
 
   TCanvas* can = new TCanvas("can","can",600,500);
@@ -119,6 +120,21 @@ void Plot_PDO_v_CH(string filename){
 
   TH1D* histX = hist->ProjectionX("1DX",200,1100);
   histX->Draw();
+  histX->GetXaxis()->CenterTitle();
+  histX->GetXaxis()->SetTitleFont(132);
+  histX->GetXaxis()->SetTitleSize(0.06);
+  histX->GetXaxis()->SetTitleOffset(1.06);
+  histX->GetXaxis()->SetLabelFont(132);
+  histX->GetXaxis()->SetLabelSize(0.05);
+  histX->GetXaxis()->SetTitle(varXname.c_str());
+  histX->GetYaxis()->CenterTitle();
+  histX->GetYaxis()->SetTitleFont(132);
+  histX->GetYaxis()->SetTitleSize(0.06);
+  histX->GetYaxis()->SetTitleOffset(1.12);
+  histX->GetYaxis()->SetLabelFont(132);
+  histX->GetYaxis()->SetLabelSize(0.05);
+  histX->GetYaxis()->SetTitle(varZname.c_str());
+  
 }
 
 void setstyle(int istyle) {
