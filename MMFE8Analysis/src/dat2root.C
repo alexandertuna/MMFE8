@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
   sVARv.push_back("Ntrig");
 
   vector<string> sVARx;
-  // sVARx.push_back("MMFE8");
+  sVARx.push_back("MMFE8");
   sVARx.push_back("VMM");
   sVARx.push_back("CKTPrunning");
   sVARx.push_back("PDAC");
@@ -123,12 +123,13 @@ int main(int argc, char* argv[]) {
 	      break;
 	    }
 	  } // End vmm part
-        } if (num_vmm_matches < 3) {
+        } 
+	if (num_vmm_matches < 3) {
           for (int x = 0; x < Nvarx; x++) {
-            if(strncmp(sVARx[x].c_str(),p,sVARx[x].length())==0){
+            if(strncmp((sVARx[x]+"=").c_str(),p,sVARx[x].length()+1)==0){
 	      sscanf(p,(sVARx[x]+"=%d").c_str(), &vVARx[x]);
               num_xadc_matches++;
-	      vFoundv[x] = true;
+	      vFoundx[x] = true;
 	      break;
 	    }
           }
@@ -136,17 +137,17 @@ int main(int argc, char* argv[]) {
       	p = strtok(NULL, " ");
       } // End of line read
 
-      if (num_vmm_matches > 1){
+      if (num_vmm_matches > 2){
 	// set unfound vars to -1
 	for(int v = 0; v < Nvarv; v++)
 	  if(vFoundv[v] == false)
-	    vVARv[v] = -1;
+	    vVARv[v] = 0;
         vtree->Fill();
         //printf("%s -> VMM\n", line.c_str());
       } else {//if (num_xadc_matches > Nvarx)
 	for(int x = 0; x < Nvarx; x++)
 	  if(vFoundx[x] == false)
-	    vVARx[x] = -1;
+	    vVARx[x] = 0;
         xtree->Fill();
         //printf("%s -> xADC\n", line.c_str());
       }
