@@ -10,8 +10,7 @@ using namespace std;
 
 
 /************ User-editable constants ************/
-const string input_filename = \
-  "../../mmfe8_gui/CalibrationRoutine/mmfe8_CalibRoutine.root";
+const string input_filename = "test.root";
 const int vmm = 3;
 
 /*********************       CODE      *******************/
